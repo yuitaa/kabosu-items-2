@@ -145,6 +145,14 @@ const BannerPattern = v.objectWithRest(
   v.unknown(),
 );
 
+const Trim = v.objectWithRest(
+  {
+    material: ResourceLocation,
+    pattern: ResourceLocation,
+  },
+  v.unknown(),
+);
+
 export const componentSchemas = {
   'minecraft:damage': NonNegativeInt,
   'minecraft:max_damage': PositiveInt,
@@ -183,6 +191,7 @@ export const componentSchemas = {
   'minecraft:tooltip_style': ResourceLocation,
   'minecraft:profile': Profile,
   'minecraft:banner_patterns': v.array(BannerPattern),
+  'minecraft:trim': Trim,
   'minecraft:block_entity_data': v.unknown(),
   'minecraft:entity_data': v.unknown(),
   'minecraft:container': v.unknown(),

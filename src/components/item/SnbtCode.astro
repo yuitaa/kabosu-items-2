@@ -1,0 +1,42 @@
+---
+import { highlightSnbt } from '@/lib/minecraft/snbt-highlight';
+
+interface Props {
+  code: string;
+}
+
+const { code } = Astro.props;
+const highlighted = highlightSnbt(code);
+---
+
+<pre class="snbt-code language-snbt"><code class="language-snbt" set:html={highlighted} /></pre>
+
+<style>
+  .snbt-code {
+    --snbt-key: #0550ae;
+    --snbt-string: #0a3069;
+    --snbt-number: #953800;
+    --snbt-boolean: #8250df;
+    --snbt-punctuation: #57606a;
+  }
+
+  .snbt-code :global(.token.property) {
+    color: var(--snbt-key);
+  }
+
+  .snbt-code :global(.token.string) {
+    color: var(--snbt-string);
+  }
+
+  .snbt-code :global(.token.number) {
+    color: var(--snbt-number);
+  }
+
+  .snbt-code :global(.token.boolean) {
+    color: var(--snbt-boolean);
+  }
+
+  .snbt-code :global(.token.punctuation) {
+    color: var(--snbt-punctuation);
+  }
+</style>

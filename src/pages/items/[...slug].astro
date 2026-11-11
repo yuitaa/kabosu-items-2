@@ -1,8 +1,8 @@
 ---
-import ComponentRow from '@/components/item/ComponentRow.astro';
 import IssueList from '@/components/item/IssueList.astro';
 import ItemPreview from '@/components/item/ItemPreview.astro';
 import RawSnbt from '@/components/item/RawSnbt.astro';
+import SnbtCode from '@/components/item/SnbtCode.astro';
 import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
@@ -25,6 +25,10 @@ const { view, presentation } = entry;
 const attributeGroups = groupAttributes(presentation.attributes);
 const normalizedSnbt = view.root?.toPrettyString() ?? null;
 const typedJson = view.item ? JSON.stringify(view.item, null, 2) : null;
+
+const root = view.root;
+const componentsTag = root?.isCompound() && root.hasCompound('components') ? root.getCompound('components') : null;
+const componentsSnbt = componentsTag && componentsTag.size > 0 ? `components: ${componentsTag.toPrettyString()}` : null;
 ---
 
 <Layout title={`${presentation.plainName} | Kabosu Items`}>
@@ -146,15 +150,7 @@ const typedJson = view.item ? JSON.stringify(view.item, null, 2) : null;
 
   <section aria-labelledby="item-components-heading">
     <h2 id="item-components-heading">コンポーネント</h2>
-    {view.components.length > 0 ? (
-      <dl>
-        {view.components.map((component) => (
-          <ComponentRow entry={component} />
-        ))}
-      </dl>
-    ) : (
-      <p>コンポーネントはありません。</p>
-    )}
+    {componentsSnbt ? <SnbtCode code={componentsSnbt} /> : <p>コンポーネントはありません。</p>}
   </section>
 
   {typedJson && (
