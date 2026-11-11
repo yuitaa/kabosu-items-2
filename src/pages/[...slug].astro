@@ -5,7 +5,6 @@ import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
 import { groupAttributes } from '@/lib/minecraft/item/presentation';
-import { withBase } from '@/lib/site';
 
 export function getStaticPaths() {
   return itemEntries.map(({ view }) => ({
@@ -36,12 +35,6 @@ const description = loreText || undefined;
 ---
 
 <Layout title={`${presentation.plainName} | Kabosu Items`} description={description} type="article">
-  <nav aria-label="パンくず">
-    <a href={withBase('/')}>アイテム一覧</a>
-    <span aria-hidden="true">/</span>
-    <span>{presentation.plainName}</span>
-  </nav>
-
   <h1>
     <TextSpans spans={presentation.name} />
   </h1>
