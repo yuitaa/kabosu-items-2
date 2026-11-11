@@ -1,4 +1,6 @@
-import { NbtTag } from 'deepslate/nbt';
+import type { NbtTag } from 'deepslate/nbt';
+import { StringReader } from 'deepslate/util';
+import { readTag } from './snbt-parser';
 
 /**
  * Result of parsing an SNBT string. Parsing is done at build time only; the
@@ -8,7 +10,15 @@ export type SnbtParseResult = { ok: true; root: NbtTag } | { ok: false; error: s
 
 export function parseSnbt(source: string): SnbtParseResult {
   try {
-    return { ok: true, root: NbtTag.fromString(source) };
+    const reader = new StringReader(source);
+    const root = readTag(reader);
+
+    reader.skipWhitespace();
+    if (reader.canRead()) {
+      throw reader.createError(`Unexpected trailing character '${reader.peek()}'`);
+    }
+
+    return { ok: true, root };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) };
   }
