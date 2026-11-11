@@ -9,3 +9,9 @@ node_modules/
 
 # lock files
 bun.lock
+
+# vendored game data, kept in its upstream formatting
+src/data/minecraft/lang/
+
+# SNBT item files are hand-written data, not something Prettier can parse
+*.snbt
