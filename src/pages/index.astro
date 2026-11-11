@@ -18,7 +18,6 @@ for (const { presentation } of itemEntries) {
 
 const entries = itemEntries.map((entry) => {
   const { view, presentation } = entry;
-  const invalid = view.components.filter((component) => component.kind === 'invalid').length;
   const itemId = view.item?.id ?? '';
   const search = [
     presentation.plainName,
@@ -39,7 +38,6 @@ const entries = itemEntries.map((entry) => {
     search,
     enchantments: presentation.enchantments.map((row) => `${stripNamespace(row.id)}:${row.levelValue}`).join(','),
     attributes: presentation.attributes.map((row) => `${stripNamespace(row.id)}:${row.amount}`).join(','),
-    invalid,
   };
 });
 ---
@@ -96,14 +94,12 @@ const entries = itemEntries.map((entry) => {
   </p>
 
   <ul class="item-list">
-    {entries.map(({ view, presentation, href, search, enchantments, attributes, invalid }) => (
+    {entries.map(({ view, presentation, href, search, enchantments, attributes }) => (
       <li data-item data-search={search} data-enchantments={enchantments} data-attributes={attributes}>
         <a href={href}>
           <TextSpans spans={presentation.name} />
         </a>{' '}
         <code>{view.item?.id ?? view.source.slug}</code>
-        {view.error && <span data-status="error">解析エラー</span>}
-        {invalid > 0 && <span data-status="invalid">{invalid}件の不正なコンポーネント</span>}
       </li>
     ))}
   </ul>

@@ -1,7 +1,5 @@
 ---
-import IssueList from '@/components/item/IssueList.astro';
 import ItemPreview from '@/components/item/ItemPreview.astro';
-import RawSnbt from '@/components/item/RawSnbt.astro';
 import SnbtCode from '@/components/item/SnbtCode.astro';
 import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
@@ -23,8 +21,6 @@ if (!entry) {
 
 const { view, presentation } = entry;
 const attributeGroups = groupAttributes(presentation.attributes);
-const normalizedSnbt = view.root?.toPrettyString() ?? null;
-const typedJson = view.item ? JSON.stringify(view.item, null, 2) : null;
 
 const root = view.root;
 const componentsTag = root?.isCompound() && root.hasCompound('components') ? root.getCompound('components') : null;
@@ -41,20 +37,6 @@ const componentsSnbt = componentsTag && componentsTag.size > 0 ? `components: ${
   <h1>
     <TextSpans spans={presentation.name} />
   </h1>
-
-  {view.error && (
-    <section class="item-error" aria-labelledby="item-error-heading">
-      <h2 id="item-error-heading">解析エラー</h2>
-      <p>{view.error}</p>
-    </section>
-  )}
-
-  {view.issues.length > 0 && (
-    <section aria-labelledby="item-issues-heading">
-      <h2 id="item-issues-heading">検証エラー</h2>
-      <IssueList issues={view.issues} />
-    </section>
-  )}
 
   <section aria-labelledby="item-preview-heading">
     <h2 id="item-preview-heading">プレビュー</h2>
@@ -152,24 +134,4 @@ const componentsSnbt = componentsTag && componentsTag.size > 0 ? `components: ${
     <h2 id="item-components-heading">コンポーネント</h2>
     {componentsSnbt ? <SnbtCode code={componentsSnbt} /> : <p>コンポーネントはありません。</p>}
   </section>
-
-  {typedJson && (
-    <details>
-      <summary>型付きデータ (JSON)</summary>
-      <pre>
-          <code>{typedJson}</code>
-        </pre>
-    </details>
-  )}
-
-  {normalizedSnbt && (
-    <details>
-      <summary>正規化したSNBT</summary>
-      <pre>
-          <code>{normalizedSnbt}</code>
-        </pre>
-    </details>
-  )}
-
-  <RawSnbt snbt={view.source.snbt} />
 </Layout>
