@@ -1,0 +1,30 @@
+---
+import type { TextSpan } from '@/lib/minecraft/item-components/text';
+
+interface Props {
+  spans: readonly TextSpan[];
+}
+
+const { spans } = Astro.props;
+
+function textDecoration(span: TextSpan): string | undefined {
+  const decorations: string[] = [];
+  if (span.underlined) decorations.push('underline');
+  if (span.strikethrough) decorations.push('line-through');
+  return decorations.length > 0 ? decorations.join(' ') : undefined;
+}
+---
+
+<span>
+  {spans.map((span) => (
+    <span
+      style={{
+        color: span.color,
+        fontWeight: span.bold ? 'bold' : undefined,
+        fontStyle: span.italic ? 'italic' : undefined,
+        textDecoration: textDecoration(span),
+      }}>
+      {span.text}
+    </span>
+  ))}
+</span>

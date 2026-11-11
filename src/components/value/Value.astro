@@ -1,0 +1,57 @@
+---
+import Value from '@/components/value/Value.astro';
+
+interface Props {
+  value: unknown;
+  depth?: number;
+}
+
+const { value, depth = 0 } = Astro.props;
+
+const isArray = Array.isArray(value);
+const isObject = typeof value === 'object' && value !== null && !isArray;
+const entries = isObject ? Object.entries(value as Record<string, unknown>) : [];
+const items = isArray ? (value as unknown[]) : [];
+
+// Keep deeply nested data readable instead of exploding the page.
+const truncated = depth >= 8;
+---
+
+{truncated ? (
+  <code>{JSON.stringify(value)}</code>
+) : isArray ? (
+  items.length === 0 ? (
+    <span>{'[]'}</span>
+  ) : (
+    <ul class="value-list">
+      {items.map((item) => (
+        <li>
+          <Value value={item} depth={depth + 1} />
+        </li>
+      ))}
+    </ul>
+  )
+) : isObject ? (
+  entries.length === 0 ? (
+    <span>{'{}'}</span>
+  ) : (
+    <dl class="value-object">
+      {entries.map(([key, entry]) => (
+        <>
+          <dt>
+            <code>{key}</code>
+          </dt>
+          <dd>
+            <Value value={entry} depth={depth + 1} />
+          </dd>
+        </>
+      ))}
+    </dl>
+  )
+) : typeof value === 'string' ? (
+  <span>{JSON.stringify(value)}</span>
+) : value === null || value === undefined ? (
+  <span>{String(value)}</span>
+) : (
+  <span>{String(value)}</span>
+)}

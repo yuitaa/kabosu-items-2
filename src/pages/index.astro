@@ -1,11 +1,229 @@
 ---
-import Welcome from '@/components/Welcome.astro';
+import TextSpans from '@/components/item/TextSpans.astro';
+import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
+import { stripNamespace } from '@/lib/minecraft/item/presentation';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const enchantOptions = new Map<string, string>();
+const attributeOptions = new Map<string, string>();
+
+for (const { presentation } of itemEntries) {
+  for (const row of presentation.enchantments) {
+    enchantOptions.set(stripNamespace(row.id), row.name);
+  }
+  for (const row of presentation.attributes) {
+    attributeOptions.set(stripNamespace(row.id), row.name);
+  }
+}
+
+const entries = itemEntries.map((entry) => {
+  const { view, presentation } = entry;
+  const invalid = view.components.filter((component) => component.kind === 'invalid').length;
+  const unknown = view.components.filter((component) => component.kind === 'unknown').length;
+  const itemId = view.item?.id ?? '';
+  const search = [
+    presentation.plainName,
+    itemId,
+    stripNamespace(itemId),
+    view.source.slug,
+    ...view.components.map((component) => component.id),
+    ...presentation.enchantments.map((row) => row.name),
+    ...presentation.attributes.map((row) => row.name),
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  return {
+    view,
+    presentation,
+    href: `/items/${view.source.slug}`,
+    search,
+    enchantments: presentation.enchantments.map((row) => `${stripNamespace(row.id)}:${row.levelValue}`).join(','),
+    attributes: presentation.attributes.map((row) => `${stripNamespace(row.id)}:${row.amount}`).join(','),
+    invalid,
+    unknown,
+  };
+});
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Kabosu Items">
+  <h1>Kabosu Items</h1>
+  <p>かぼすサーバーのアイテム情報を閲覧できる非公式サイトです。</p>
+
+  <form class="item-filters">
+    <div>
+      <label for="item-search">検索</label>
+      <input id="item-search" name="q" type="search" placeholder="アイテム名 / Minecraft ID / コンポーネントID" />
+    </div>
+
+    <fieldset>
+      <legend>エンチャント</legend>
+
+      <label for="enchant-type">種類</label>
+      <select id="enchant-type" name="enchantment">
+        <option value="">すべて</option>
+        {[...enchantOptions].map(([id, name]) => (
+          <option value={id}>{name}</option>
+        ))}
+      </select>
+
+      <label for="enchant-min">最小レベル</label>
+      <input id="enchant-min" name="enchantmentMin" type="number" min="0" inputmode="numeric" />
+
+      <label for="enchant-max">最大レベル</label>
+      <input id="enchant-max" name="enchantmentMax" type="number" min="0" inputmode="numeric" />
+    </fieldset>
+
+    <fieldset>
+      <legend>追加効果</legend>
+
+      <label for="attribute-type">種類</label>
+      <select id="attribute-type" name="attribute">
+        <option value="">すべて</option>
+        {[...attributeOptions].map(([id, name]) => (
+          <option value={id}>{name}</option>
+        ))}
+      </select>
+
+      <label for="attribute-min">最小値</label>
+      <input id="attribute-min" name="attributeMin" type="number" inputmode="decimal" />
+
+      <label for="attribute-max">最大値</label>
+      <input id="attribute-max" name="attributeMax" type="number" inputmode="decimal" />
+    </fieldset>
+  </form>
+
+  <p>
+    <strong id="item-count">{entries.length}</strong> 件のアイテム
+  </p>
+
+  <ul class="item-list">
+    {entries.map(({ view, presentation, href, search, enchantments, attributes, invalid, unknown }) => (
+      <li data-item data-search={search} data-enchantments={enchantments} data-attributes={attributes}>
+        <a href={href}>
+          <TextSpans spans={presentation.name} />
+        </a>{' '}
+        <code>{view.item?.id ?? view.source.slug}</code>
+        {view.error && <span data-status="error">解析エラー</span>}
+        {invalid > 0 && <span data-status="invalid">{invalid}件の不正なコンポーネント</span>}
+        {unknown > 0 && <span data-status="unknown">{unknown}件の不明なコンポーネント</span>}
+      </li>
+    ))}
+  </ul>
 </Layout>
+
+<script>
+  const searchInput = document.querySelector<HTMLInputElement>('#item-search');
+  const enchantType = document.querySelector<HTMLSelectElement>('#enchant-type');
+  const enchantMin = document.querySelector<HTMLInputElement>('#enchant-min');
+  const enchantMax = document.querySelector<HTMLInputElement>('#enchant-max');
+  const attributeType = document.querySelector<HTMLSelectElement>('#attribute-type');
+  const attributeMin = document.querySelector<HTMLInputElement>('#attribute-min');
+  const attributeMax = document.querySelector<HTMLInputElement>('#attribute-max');
+  const count = document.querySelector<HTMLElement>('#item-count');
+  const rows = Array.from(document.querySelectorAll<HTMLLIElement>('[data-item]'));
+
+  function normalize(value: string): string {
+    return value.toLowerCase().replace(/\s+/g, '');
+  }
+
+  function numberOrNull(input: HTMLInputElement | null): number | null {
+    if (!input || input.value === '') {
+      return null;
+    }
+    const value = Number(input.value);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  function matchesRange(pairs: string, type: string, min: number | null, max: number | null): boolean {
+    if (!type) {
+      return true;
+    }
+
+    return pairs.split(',').some((pair) => {
+      if (!pair) {
+        return false;
+      }
+      const [id, raw] = pair.split(':');
+      if (id !== type) {
+        return false;
+      }
+      const value = Number(raw);
+      if (min !== null && value < min) {
+        return false;
+      }
+      if (max !== null && value > max) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  function syncUrl(): void {
+    const params = new URLSearchParams();
+    const values: [string, string][] = [
+      ['q', searchInput?.value ?? ''],
+      ['enchantment', enchantType?.value ?? ''],
+      ['enchantmentMin', enchantMin?.value ?? ''],
+      ['enchantmentMax', enchantMax?.value ?? ''],
+      ['attribute', attributeType?.value ?? ''],
+      ['attributeMin', attributeMin?.value ?? ''],
+      ['attributeMax', attributeMax?.value ?? ''],
+    ];
+
+    for (const [key, value] of values) {
+      if (value !== '') {
+        params.set(key, value);
+      }
+    }
+
+    const query = params.toString();
+    history.replaceState(null, '', query ? `${location.pathname}?${query}` : location.pathname);
+  }
+
+  function apply(): void {
+    const query = normalize(searchInput?.value ?? '');
+    const enchant = enchantType?.value ?? '';
+    const attribute = attributeType?.value ?? '';
+    const enchantRange = [numberOrNull(enchantMin), numberOrNull(enchantMax)];
+    const attributeRange = [numberOrNull(attributeMin), numberOrNull(attributeMax)];
+
+    let visible = 0;
+
+    for (const row of rows) {
+      const matches =
+        normalize(row.dataset.search ?? '').includes(query) &&
+        matchesRange(row.dataset.enchantments ?? '', enchant, enchantRange[0], enchantRange[1]) &&
+        matchesRange(row.dataset.attributes ?? '', attribute, attributeRange[0], attributeRange[1]);
+
+      row.hidden = !matches;
+      if (matches) {
+        visible += 1;
+      }
+    }
+
+    if (count) {
+      count.textContent = String(visible);
+    }
+
+    syncUrl();
+  }
+
+  const params = new URLSearchParams(location.search);
+  if (searchInput) searchInput.value = params.get('q') ?? '';
+  if (enchantType) enchantType.value = params.get('enchantment') ?? '';
+  if (enchantMin) enchantMin.value = params.get('enchantmentMin') ?? '';
+  if (enchantMax) enchantMax.value = params.get('enchantmentMax') ?? '';
+  if (attributeType) attributeType.value = params.get('attribute') ?? '';
+  if (attributeMin) attributeMin.value = params.get('attributeMin') ?? '';
+  if (attributeMax) attributeMax.value = params.get('attributeMax') ?? '';
+
+  for (const input of [searchInput, enchantMin, enchantMax, attributeMin, attributeMax]) {
+    input?.addEventListener('input', apply);
+  }
+  for (const select of [enchantType, attributeType]) {
+    select?.addEventListener('change', apply);
+  }
+
+  apply();
+</script>

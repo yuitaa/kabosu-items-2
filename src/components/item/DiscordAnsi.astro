@@ -1,0 +1,46 @@
+---
+import { buildDiscordAnsi } from '@/lib/minecraft/item/ansi';
+import type { ItemPresentation } from '@/lib/minecraft/item/presentation';
+
+interface Props {
+  presentation: ItemPresentation;
+}
+
+const { presentation } = Astro.props;
+const ansi = buildDiscordAnsi(presentation);
+---
+
+<div class="discord-ansi">
+  <p>
+    Discord の <code>ansi</code> コードブロック用のテキストです。そのまま貼り付けると色付きで表示されます。 Discord
+    が対応しているのは太字・下線と8色までなので、斜体・打ち消し線・16進カラーは近似されます。
+  </p>
+
+  <button type="button" data-copy-target="discord-ansi-code">
+    コピー
+  </button>
+
+  <pre><code id="discord-ansi-code">{ansi}</code></pre>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-target]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const target = document.getElementById(button.dataset.copyTarget ?? '');
+      if (!target) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(target.textContent ?? '');
+        button.textContent = 'コピーしました';
+      } catch {
+        button.textContent = 'コピーできませんでした';
+      }
+
+      window.setTimeout(() => {
+        button.textContent = 'コピー';
+      }, 2000);
+    });
+  });
+</script>

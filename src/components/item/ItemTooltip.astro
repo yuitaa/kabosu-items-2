@@ -1,0 +1,51 @@
+---
+import TextSpans from '@/components/item/TextSpans.astro';
+import { groupAttributes, type ItemPresentation } from '@/lib/minecraft/item/presentation';
+
+interface Props {
+  presentation: ItemPresentation;
+}
+
+const { presentation } = Astro.props;
+const attributeGroups = groupAttributes(presentation.attributes);
+---
+
+<div class="item-tooltip">
+  <div class="item-name">
+    <TextSpans spans={presentation.name} />
+  </div>
+
+  {presentation.enchantments.map((row) => (
+    <div class="item-enchantment">
+      {row.name} {row.level}
+    </div>
+  ))}
+
+  {attributeGroups.map((group) => (
+    <div class="item-attribute-group">
+      <div class="item-attribute-header">{group.header}</div>
+      {group.rows.map((row) => (
+        <div class="item-attribute">{row.text}</div>
+      ))}
+    </div>
+  ))}
+
+  {presentation.potions.map((row) => (
+    <div class="item-potion">
+      {[row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
+    </div>
+  ))}
+
+  {presentation.extras.map((extra) => (
+    <div class="item-extra">
+      {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
+      {extra.text}
+    </div>
+  ))}
+
+  {presentation.lore.map((line) => (
+    <div class="item-lore">
+      <TextSpans spans={line} />
+    </div>
+  ))}
+</div>

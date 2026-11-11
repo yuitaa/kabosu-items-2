@@ -1,0 +1,179 @@
+---
+import ComponentRow from '@/components/item/ComponentRow.astro';
+import IssueList from '@/components/item/IssueList.astro';
+import ItemPreview from '@/components/item/ItemPreview.astro';
+import RawSnbt from '@/components/item/RawSnbt.astro';
+import TextSpans from '@/components/item/TextSpans.astro';
+import { itemEntries } from '@/data/item-views';
+import Layout from '@/layouts/Layout.astro';
+import { groupAttributes } from '@/lib/minecraft/item/presentation';
+
+export function getStaticPaths() {
+  return itemEntries.map(({ view }) => ({
+    params: { slug: view.source.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const entry = itemEntries.find((candidate) => candidate.view.source.slug === slug);
+
+if (!entry) {
+  throw new Error(`Item not found: ${slug}`);
+}
+
+const { view, presentation } = entry;
+const attributeGroups = groupAttributes(presentation.attributes);
+const normalizedSnbt = view.root?.toPrettyString() ?? null;
+const typedJson = view.item ? JSON.stringify(view.item, null, 2) : null;
+---
+
+<Layout title={`${presentation.plainName} | Kabosu Items`}>
+  <nav aria-label="パンくず">
+    <a href="/">アイテム一覧</a>
+    <span aria-hidden="true">/</span>
+    <span>{presentation.plainName}</span>
+  </nav>
+
+  <h1>
+    <TextSpans spans={presentation.name} />
+  </h1>
+
+  {view.error && (
+    <section class="item-error" aria-labelledby="item-error-heading">
+      <h2 id="item-error-heading">解析エラー</h2>
+      <p>{view.error}</p>
+    </section>
+  )}
+
+  {view.issues.length > 0 && (
+    <section aria-labelledby="item-issues-heading">
+      <h2 id="item-issues-heading">検証エラー</h2>
+      <IssueList issues={view.issues} />
+    </section>
+  )}
+
+  <section aria-labelledby="item-preview-heading">
+    <h2 id="item-preview-heading">プレビュー</h2>
+    <ItemPreview presentation={presentation} />
+  </section>
+
+  <section aria-labelledby="item-basic-heading">
+    <h2 id="item-basic-heading">基本情報</h2>
+    <dl>
+      <dt>Minecraft ID</dt>
+      <dd>
+        <code>{view.item?.id ?? view.source.slug}</code>
+      </dd>
+      <dt>不可壊</dt>
+      <dd>{presentation.unbreakable ? 'あり' : 'なし'}</dd>
+    </dl>
+  </section>
+
+  {presentation.enchantments.length > 0 && (
+    <section aria-labelledby="item-enchantments-heading">
+      <h2 id="item-enchantments-heading">エンチャント</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">名前</th>
+            <th scope="col">レベル</th>
+          </tr>
+        </thead>
+        <tbody>
+          {presentation.enchantments.map((row) => (
+            <tr>
+              <td>{row.name}</td>
+              <td>{row.level}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {attributeGroups.length > 0 && (
+    <section aria-labelledby="item-attributes-heading">
+      <h2 id="item-attributes-heading">追加効果</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">名前</th>
+            <th scope="col">値</th>
+          </tr>
+        </thead>
+        {attributeGroups.map((group) => (
+          <tbody>
+            <tr>
+              <th scope="rowgroup" colspan="2">
+                {group.header}
+              </th>
+            </tr>
+            {group.rows.map((row) => (
+              <tr>
+                <td>{row.name}</td>
+                <td>{row.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        ))}
+      </table>
+    </section>
+  )}
+
+  {presentation.potions.length > 0 && (
+    <section aria-labelledby="item-potions-heading">
+      <h2 id="item-potions-heading">ポーション効果</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">名前</th>
+            <th scope="col">レベル</th>
+            <th scope="col">時間</th>
+          </tr>
+        </thead>
+        <tbody>
+          {presentation.potions.map((row) => (
+            <tr>
+              <td>{row.name}</td>
+              <td>{row.level}</td>
+              <td>{row.duration}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  <section aria-labelledby="item-components-heading">
+    <h2 id="item-components-heading">コンポーネント</h2>
+    {view.components.length > 0 ? (
+      <dl>
+        {view.components.map((component) => (
+          <ComponentRow entry={component} />
+        ))}
+      </dl>
+    ) : (
+      <p>コンポーネントはありません。</p>
+    )}
+  </section>
+
+  {typedJson && (
+    <details>
+      <summary>型付きデータ (JSON)</summary>
+      <pre>
+          <code>{typedJson}</code>
+        </pre>
+    </details>
+  )}
+
+  {normalizedSnbt && (
+    <details>
+      <summary>正規化したSNBT</summary>
+      <pre>
+          <code>{normalizedSnbt}</code>
+        </pre>
+    </details>
+  )}
+
+  <RawSnbt snbt={view.source.snbt} />
+</Layout>
