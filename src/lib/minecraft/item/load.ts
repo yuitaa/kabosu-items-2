@@ -1,9 +1,9 @@
+import { schemaById } from '@/lib/minecraft/item-components/schemas';
+import { ItemStackSchema } from '@/lib/minecraft/item/schema';
+import type { ItemSource, ItemStack } from '@/lib/minecraft/item/types';
+import { parseSnbt, toPlain } from '@/lib/minecraft/snbt';
 import type { NbtTag } from 'deepslate/nbt';
 import * as v from 'valibot';
-import { schemaById } from '../item-components/schemas';
-import { parseSnbt, toPlain } from '../snbt';
-import { ItemStackSchema } from './schema';
-import type { ItemSource, ItemStack } from './types';
 
 export type ComponentView =
   | { id: string; kind: 'valid'; raw: unknown; value: unknown }

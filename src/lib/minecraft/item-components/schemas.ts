@@ -1,6 +1,15 @@
+import { TextComponent } from '@/lib/minecraft/item-components/text';
+import {
+  BooleanLike,
+  DyeColor,
+  Float,
+  Int,
+  NonNegativeInt,
+  PositiveInt,
+  ResourceLocation,
+  TagId,
+} from '@/lib/minecraft/primitives';
 import * as v from 'valibot';
-import { BooleanLike, DyeColor, Float, Int, NonNegativeInt, PositiveInt, ResourceLocation, TagId } from '../primitives';
-import { TextComponent } from './text';
 
 /**
  * Valibot schemas for the data components we understand.

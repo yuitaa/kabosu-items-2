@@ -1,5 +1,5 @@
+import type { ComponentId, componentSchemas } from '@/lib/minecraft/item-components/schemas';
 import type * as v from 'valibot';
-import type { ComponentId, componentSchemas } from '../item-components/schemas';
 
 export type ComponentValue<K extends ComponentId> = v.InferOutput<(typeof componentSchemas)[K]>;
 

@@ -1,6 +1,6 @@
+import { readTag } from '@/lib/minecraft/snbt-parser';
 import type { NbtTag } from 'deepslate/nbt';
 import { StringReader } from 'deepslate/util';
-import { readTag } from './snbt-parser';
 
 /**
  * Result of parsing an SNBT string. Parsing is done at build time only; the

@@ -1,7 +1,7 @@
+import { ItemComponentsSchema } from '@/lib/minecraft/item-components/schemas';
+import type { ItemStack } from '@/lib/minecraft/item/types';
+import { ResourceLocation } from '@/lib/minecraft/primitives';
 import * as v from 'valibot';
-import { ItemComponentsSchema } from '../item-components/schemas';
-import { ResourceLocation } from '../primitives';
-import type { ItemStack } from './types';
 
 /**
  * An item stack in SNBT form (`{id, count, components}`).
