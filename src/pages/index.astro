@@ -3,6 +3,7 @@ import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
 import { stripNamespace } from '@/lib/minecraft/item/presentation';
+import { withBase } from '@/lib/site';
 
 const enchantOptions = new Map<string, string>();
 const attributeOptions = new Map<string, string>();
@@ -34,7 +35,7 @@ const entries = itemEntries.map((entry) => {
   return {
     view,
     presentation,
-    href: `/items/${view.source.slug}`,
+    href: withBase(`/items/${view.source.slug}`),
     search,
     enchantments: presentation.enchantments.map((row) => `${stripNamespace(row.id)}:${row.levelValue}`).join(','),
     attributes: presentation.attributes.map((row) => `${stripNamespace(row.id)}:${row.amount}`).join(','),

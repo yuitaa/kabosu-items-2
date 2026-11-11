@@ -5,6 +5,7 @@ import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
 import { groupAttributes } from '@/lib/minecraft/item/presentation';
+import { withBase } from '@/lib/site';
 
 export function getStaticPaths() {
   return itemEntries.map(({ view }) => ({
@@ -25,11 +26,18 @@ const attributeGroups = groupAttributes(presentation.attributes);
 const root = view.root;
 const componentsTag = root?.isCompound() && root.hasCompound('components') ? root.getCompound('components') : null;
 const componentsSnbt = componentsTag && componentsTag.size > 0 ? `components: ${componentsTag.toPrettyString()}` : null;
+
+const loreText = presentation.lore
+  .map((line) => line.map((span) => span.text).join(''))
+  .filter((line) => line.trim() !== '')
+  .join(' ')
+  .trim();
+const description = loreText || undefined;
 ---
 
-<Layout title={`${presentation.plainName} | Kabosu Items`}>
+<Layout title={`${presentation.plainName} | Kabosu Items`} description={description} type="article">
   <nav aria-label="パンくず">
-    <a href="/">アイテム一覧</a>
+    <a href={withBase('/')}>アイテム一覧</a>
     <span aria-hidden="true">/</span>
     <span>{presentation.plainName}</span>
   </nav>
