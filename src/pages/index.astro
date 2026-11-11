@@ -35,7 +35,7 @@ const entries = itemEntries.map((entry) => {
   return {
     view,
     presentation,
-    href: withBase(`/items/${view.source.slug}`),
+    href: withBase(`/${view.source.slug}`),
     search,
     enchantments: presentation.enchantments.map((row) => `${stripNamespace(row.id)}:${row.levelValue}`).join(','),
     attributes: presentation.attributes.map((row) => `${stripNamespace(row.id)}:${row.amount}`).join(','),
