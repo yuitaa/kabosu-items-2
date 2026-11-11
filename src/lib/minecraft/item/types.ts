@@ -15,8 +15,6 @@ export type ItemComponents = {
 
 export interface ItemStack {
   id: string;
-  /** Defaults to 1 when absent. */
-  count?: number;
   components?: ItemComponents;
 }
 

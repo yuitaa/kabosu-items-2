@@ -36,6 +36,14 @@ export function loadItem(source: ItemSource): ItemView {
   }
 
   const { root } = parsed;
+
+  // `count` is never displayed, so drop it from the parsed tree. The original
+  // SNBT stays in `source.snbt` untouched; this also keeps pretty-printed
+  // output free of it.
+  if (root.isCompound()) {
+    root.delete('count');
+  }
+
   const result = v.safeParse(ItemStackSchema, toPlain(root));
 
   const componentMap = root.isCompound() ? toPlain(root.getCompound('components')) : undefined;

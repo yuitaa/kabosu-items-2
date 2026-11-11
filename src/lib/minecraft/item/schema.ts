@@ -6,13 +6,15 @@ import * as v from 'valibot';
 /**
  * An item stack in SNBT form (`{id, count, components}`).
  *
- * `count` and `components` are optional because Minecraft defaults them.
+ * `components` is optional because Minecraft defaults it. `count` is accepted
+ * in the source SNBT but dropped before validation, since the UI never shows
+ * it, so it is not part of the typed item.
+ *
  * Top-level keys we do not know about are preserved via `objectWithRest`.
  */
 export const ItemStackSchema = v.objectWithRest(
   {
     id: ResourceLocation,
-    count: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(99))),
     components: v.optional(ItemComponentsSchema),
   },
   v.unknown(),
