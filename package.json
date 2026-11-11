@@ -19,10 +19,12 @@
     "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
+    "deepslate": "^0.27.2",
     "prettier": "^3.10.0",
     "prettier-plugin-astro": "^1.1.2",
     "prettier-plugin-astro-organize-imports": "^0.4.14",
     "prettier-plugin-organize-imports": "^4.3.0",
-    "prettier-plugin-tailwindcss": "^0.8.1"
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "valibot": "^1.5.0"
   }
 }
