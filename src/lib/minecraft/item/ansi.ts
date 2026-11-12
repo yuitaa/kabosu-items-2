@@ -1,5 +1,5 @@
 import type { TextSpan } from '@/lib/minecraft/item-components/text';
-import { groupAttributes, type ItemPresentation } from '@/lib/minecraft/item/presentation';
+import { groupAttributes, type FireworkColor, type ItemPresentation } from '@/lib/minecraft/item/presentation';
 
 /**
  * Discord's ANSI code blocks only render the eight base colors, so custom hex
@@ -58,6 +58,36 @@ export function buildDiscordAnsi(presentation: ItemPresentation): string {
     }
   }
 
+  if (presentation.firework) {
+    lines.push(presentation.firework.flightText);
+    for (const explosion of presentation.firework.explosions) {
+      const count = explosion.count > 1 ? ` x ${explosion.count}` : '';
+      lines.push(` - ${explosion.shape}${count}`);
+      for (const color of explosion.colors) {
+        lines.push(`   - ${fireworkColorToAnsi(color)}`);
+      }
+      if (explosion.fadeColors.length > 0) {
+        const colors = explosion.fadeColors.map((color) => fireworkColorToAnsi(color)).join(' ');
+        lines.push(`   - ${explosion.fadeLabel}${colors}`);
+      }
+      for (const effect of explosion.effects) {
+        lines.push(`   - ${effect}`);
+      }
+    }
+  }
+
+  if (presentation.banner) {
+    if (presentation.banner.baseColor) {
+      lines.push(` - ${presentation.banner.baseColorLabel} ${presentation.banner.baseColor}`);
+    }
+    if (presentation.banner.patterns.length > 0) {
+      lines.push(` - ${presentation.banner.patternsLabel}`);
+      for (const pattern of presentation.banner.patterns) {
+        lines.push(`   - ${pattern.text}`);
+      }
+    }
+  }
+
   for (const extra of presentation.extras) {
     lines.push(` - ${extra.text}`);
   }
@@ -67,6 +97,10 @@ export function buildDiscordAnsi(presentation: ItemPresentation): string {
   }
 
   return ['```ansi', lines.join('\n'), `${RESET}\`\`\``].join('\n');
+}
+
+function fireworkColorToAnsi(color: FireworkColor): string {
+  return textSpansToAnsi([{ text: color.name ?? color.hex, color: color.hex }]);
 }
 
 function styleCodes(span: TextSpan): string {

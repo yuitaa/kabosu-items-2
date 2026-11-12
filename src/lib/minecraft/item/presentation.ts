@@ -46,6 +46,51 @@ export interface ExtraRow {
   afterLore?: boolean;
 }
 
+/** One color used by a firework explosion. */
+export interface FireworkColor {
+  /** `#RRGGBB` for the swatch. */
+  hex: string;
+  /** Dye name such as `黒色`, or `null` for custom colors. */
+  name: string | null;
+}
+
+export interface FireworkExplosionRow {
+  /** Translated shape name, e.g. `小玉`. */
+  shape: string;
+  colors: FireworkColor[];
+  fadeColors: FireworkColor[];
+  /** Translated `色変化：` prefix. */
+  fadeLabel: string;
+  /** Translated effect labels such as `流星` and `点滅`. */
+  effects: string[];
+  /** Identical explosions are collapsed and counted. */
+  count: number;
+}
+
+export interface FireworkInfo {
+  /** e.g. `飛翔時間：1`. */
+  flightText: string;
+  explosions: FireworkExplosionRow[];
+}
+
+export interface BannerPatternRow {
+  /** Combined pattern and color, e.g. `左上向きに白色の斜め帯`. */
+  text: string;
+  /** Pattern color as `#RRGGBB` for the swatch. */
+  color: string;
+}
+
+export interface BannerInfo {
+  /** Translated base color, e.g. `薄灰色`, or `null` when unset. */
+  baseColor: string | null;
+  baseColorHex: string | null;
+  /** Label shown before the base color. */
+  baseColorLabel: string;
+  /** Header shown above the banner pattern list. */
+  patternsLabel: string;
+  patterns: BannerPatternRow[];
+}
+
 /** Structured trim data shared by the tooltip and the basic information table. */
 export interface TrimInfo {
   material: string;
@@ -65,6 +110,10 @@ export interface ItemPresentation {
   dyedColor: string | null;
   /** Trim material and pattern, or `null` when the item has no trim. */
   trim: TrimInfo | null;
+  /** Firework rocket contents, or `null` when the item is not a firework. */
+  firework: FireworkInfo | null;
+  /** Shield base color and banner patterns, or `null` when there is neither. */
+  banner: BannerInfo | null;
   lore: TextSpan[][];
   enchantments: EnchantmentRow[];
   attributes: AttributeRow[];
@@ -78,6 +127,32 @@ const RARITY_COLORS: Record<string, string> = {
   rare: '#55FFFF',
   epic: '#FF55FF',
 };
+
+/**
+ * The 16 dye colors as Minecraft renders them. Firework particles and banner
+ * patterns store these exact RGB values, so an exact match identifies a dye.
+ */
+const DYE_COLORS = [
+  { id: 'white', hex: '#F9FFFE' },
+  { id: 'orange', hex: '#F9801D' },
+  { id: 'magenta', hex: '#C74EBD' },
+  { id: 'light_blue', hex: '#3AB3DA' },
+  { id: 'yellow', hex: '#FED83D' },
+  { id: 'lime', hex: '#80C71D' },
+  { id: 'pink', hex: '#F38BAA' },
+  { id: 'gray', hex: '#474F52' },
+  { id: 'light_gray', hex: '#9D9D97' },
+  { id: 'cyan', hex: '#169C9C' },
+  { id: 'purple', hex: '#8932B8' },
+  { id: 'blue', hex: '#3C44AA' },
+  { id: 'brown', hex: '#835432' },
+  { id: 'green', hex: '#5E7C16' },
+  { id: 'red', hex: '#B02E26' },
+  { id: 'black', hex: '#1D1D21' },
+] as const;
+
+const DYE_COLOR_BY_HEX = new Map<string, string>(DYE_COLORS.map(({ id, hex }) => [hex, id]));
+const DYE_COLOR_BY_ID = new Map<string, string>(DYE_COLORS.map(({ id, hex }) => [id, hex]));
 
 const OPERATIONS = {
   add_value: { positive: 'attribute.modifier.plus.0', negative: 'attribute.modifier.take.0', scale: 1 },
@@ -107,6 +182,8 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
       unbreakable: false,
       dyedColor: null,
       trim: null,
+      firework: null,
+      banner: null,
       lore: [],
       enchantments: [],
       attributes: [],
@@ -128,6 +205,8 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
     unbreakable,
     dyedColor,
     trim,
+    firework: buildFirework(components, t),
+    banner: buildBanner(components, t),
     lore: buildLore(components['minecraft:lore']),
     enchantments: buildEnchantments(components, t),
     attributes: buildAttributes(components, t),
@@ -309,6 +388,124 @@ function buildTrim(components: Record<string, unknown>, t: Translator): TrimInfo
   return { material, pattern, text: `${material}の${pattern}` };
 }
 
+function buildFirework(components: Record<string, unknown>, t: Translator): FireworkInfo | null {
+  const fireworks = components['minecraft:fireworks'];
+  if (!isRecord(fireworks)) {
+    return null;
+  }
+
+  const flight = typeof fireworks.flight_duration === 'number' ? fireworks.flight_duration : 1;
+  const flightText = formatMessage(t('item.minecraft.firework_rocket.flight_duration', '飛翔時間：%s'), [flight]);
+  const fadeLabel = t('item.minecraft.firework_star.fade_to', '色変化：');
+  const trail = t('item.minecraft.firework_star.trail', '流星');
+  const twinkle = t('item.minecraft.firework_star.flicker', '点滅');
+  const unknownShape = t('item.minecraft.firework_star.shape', '不明な形状');
+
+  const explosions: FireworkExplosionRow[] = [];
+  const byKey = new Map<string, FireworkExplosionRow>();
+  const source = Array.isArray(fireworks.explosions) ? fireworks.explosions : [];
+
+  for (const value of source) {
+    if (!isRecord(value)) {
+      continue;
+    }
+
+    const shapeId = typeof value.shape === 'string' ? stripNamespace(value.shape) : '';
+    const colors = buildFireworkColors(value.colors, t);
+    const fadeColors = buildFireworkColors(value.fade_colors, t);
+    const effects: string[] = [];
+    if (isTruthy(value.has_trail)) {
+      effects.push(trail);
+    }
+    if (isTruthy(value.has_twinkle)) {
+      effects.push(twinkle);
+    }
+
+    // Vanilla 1.21.5+ collapses repeated identical stars into one counted row.
+    const key = JSON.stringify([
+      shapeId,
+      colors.map((color) => color.hex),
+      fadeColors.map((color) => color.hex),
+      effects,
+    ]);
+    const existing = byKey.get(key);
+    if (existing) {
+      existing.count += 1;
+      continue;
+    }
+
+    const row: FireworkExplosionRow = {
+      shape: shapeId ? t(`item.minecraft.firework_star.shape.${shapeId}`, unknownShape) : unknownShape,
+      colors,
+      fadeColors,
+      fadeLabel,
+      effects,
+      count: 1,
+    };
+    byKey.set(key, row);
+    explosions.push(row);
+  }
+
+  return { flightText, explosions };
+}
+
+function buildFireworkColors(value: unknown, t: Translator): FireworkColor[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const seen = new Set<string>();
+  const colors: FireworkColor[] = [];
+
+  for (const item of value) {
+    const hex = colorToHex(item);
+    if (!hex || seen.has(hex)) {
+      continue;
+    }
+    seen.add(hex);
+
+    const dye = DYE_COLOR_BY_HEX.get(hex);
+    colors.push({ hex, name: dye ? t(`color.minecraft.${dye}`, dye) : null });
+  }
+
+  return colors;
+}
+
+function buildBanner(components: Record<string, unknown>, t: Translator): BannerInfo | null {
+  const baseColorId =
+    typeof components['minecraft:base_color'] === 'string' ? components['minecraft:base_color'] : null;
+  const source = components['minecraft:banner_patterns'];
+  const patterns: BannerPatternRow[] = [];
+
+  if (Array.isArray(source)) {
+    for (const pattern of source) {
+      if (!isRecord(pattern) || typeof pattern.pattern !== 'string' || typeof pattern.color !== 'string') {
+        continue;
+      }
+
+      const patternId = stripNamespace(pattern.pattern);
+      const colorId = pattern.color;
+      const text = t(
+        `block.minecraft.banner.${patternId}.${colorId}`,
+        `${t(`color.minecraft.${colorId}`, colorId)}の${patternId}`,
+      );
+      patterns.push({ text, color: DYE_COLOR_BY_ID.get(colorId) ?? '#FFFFFF' });
+    }
+  }
+
+  if (baseColorId === null && patterns.length === 0) {
+    return null;
+  }
+
+  return {
+    baseColor: baseColorId === null ? null : t(`color.minecraft.${baseColorId}`, baseColorId),
+    baseColorHex: baseColorId === null ? null : (DYE_COLOR_BY_ID.get(baseColorId) ?? '#FFFFFF'),
+    baseColorLabel: 'ベースカラー',
+    patternsLabel: '旗の模様',
+    patterns,
+  };
+}
+
 function buildExtras(
   components: Record<string, unknown>,
   t: Translator,
@@ -364,6 +561,10 @@ function formatDuration(ticks: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function isTruthy(value: unknown): boolean {
+  return value === true || value === 1;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

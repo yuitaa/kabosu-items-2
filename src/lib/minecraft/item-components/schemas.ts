@@ -97,6 +97,27 @@ const PotionContents = v.objectWithRest(
   v.unknown(),
 );
 
+const FireworkColor = v.union([NonNegativeInt, v.tuple([v.number(), v.number(), v.number()])]);
+
+const FireworkExplosion = v.objectWithRest(
+  {
+    shape: v.optional(v.string()),
+    colors: v.optional(v.array(FireworkColor)),
+    fade_colors: v.optional(v.array(FireworkColor)),
+    has_trail: v.optional(BooleanLike),
+    has_twinkle: v.optional(BooleanLike),
+  },
+  v.unknown(),
+);
+
+const Fireworks = v.objectWithRest(
+  {
+    flight_duration: v.optional(Int),
+    explosions: v.optional(v.array(FireworkExplosion)),
+  },
+  v.unknown(),
+);
+
 const TooltipDisplay = v.objectWithRest(
   {
     hide_tooltip: v.optional(BooleanLike),
@@ -178,6 +199,7 @@ export const componentSchemas = {
   'minecraft:food': Food,
   'minecraft:tool': Tool,
   'minecraft:potion_contents': PotionContents,
+  'minecraft:fireworks': Fireworks,
   'minecraft:ominous_bottle_amplifier': NonNegativeInt,
   'minecraft:map_id': Int,
   'minecraft:weapon': v.objectWithRest(
