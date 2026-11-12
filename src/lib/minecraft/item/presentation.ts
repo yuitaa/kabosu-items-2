@@ -50,6 +50,8 @@ export interface ExtraRow {
 export interface ItemPresentation {
   name: TextSpan[];
   plainName: string;
+  /** The vanilla item name from the translation file, ignoring `custom_name`. */
+  itemName: string;
   unbreakable: boolean;
   lore: TextSpan[][];
   enchantments: EnchantmentRow[];
@@ -89,6 +91,7 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
     return {
       name: [{ text: fallbackName }],
       plainName: fallbackName,
+      itemName: fallbackName,
       unbreakable: false,
       lore: [],
       enchantments: [],
@@ -105,6 +108,7 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
   return {
     name,
     plainName: name.map((span) => span.text).join('') || fallbackName,
+    itemName: t(resourceKey('item', item.id), item.id),
     unbreakable,
     lore: buildLore(components['minecraft:lore']),
     enchantments: buildEnchantments(components, t),
@@ -153,7 +157,7 @@ function buildName(itemId: string, components: Record<string, unknown>, t: Trans
     }
   }
 
-  return [{ text: t(`item.${itemId}`, itemId), color: rarity }];
+  return [{ text: t(resourceKey('item', itemId), itemId), color: rarity }];
 }
 
 function rarityColor(value: unknown): string {

@@ -48,6 +48,8 @@ const description = loreText || undefined;
   <section aria-labelledby="item-basic-heading">
     <h2 id="item-basic-heading">基本情報</h2>
     <dl>
+      <dt>アイテム名</dt>
+      <dd>{presentation.itemName}</dd>
       <dt>Minecraft ID</dt>
       <dd>
         <code>{view.item?.id ?? view.source.slug}</code>
