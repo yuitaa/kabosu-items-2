@@ -1,14 +1,17 @@
 ---
 import TextSpans from '@/components/item/TextSpans.astro';
+import { isCertificateSlug } from '@/data/certificates';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
 import { stripNamespace } from '@/lib/minecraft/item/presentation';
 import { withBase } from '@/lib/site';
 
+const regularEntries = itemEntries.filter((entry) => !isCertificateSlug(entry.view.source.slug));
+
 const enchantOptions = new Map<string, string>();
 const attributeOptions = new Map<string, string>();
 
-for (const { presentation } of itemEntries) {
+for (const { presentation } of regularEntries) {
   for (const row of presentation.enchantments) {
     enchantOptions.set(stripNamespace(row.id), row.name);
   }
@@ -17,7 +20,7 @@ for (const { presentation } of itemEntries) {
   }
 }
 
-const entries = itemEntries.map((entry) => {
+const entries = regularEntries.map((entry) => {
   const { view, presentation } = entry;
   const itemId = view.item?.id ?? '';
   const search = [

@@ -1,0 +1,43 @@
+---
+import { certificateJobs, certificateRows, certificateTitle } from '@/data/certificates';
+import Layout from '@/layouts/Layout.astro';
+import { withBase } from '@/lib/site';
+
+const jobs = certificateJobs.map((job) => ({
+  ...job,
+  rows: certificateRows(job),
+}));
+
+const total = jobs.reduce((sum, job) => sum + job.rows.length, 0);
+const collected = jobs.reduce((sum, job) => sum + job.rows.filter((row) => row.entry).length, 0);
+---
+
+<Layout title="資格証明書一覧 | Kabosu Items" description="かぼすサーバーのジョブで獲得できる資格証明書の一覧です。">
+  <h1>資格証明書一覧</h1>
+  <p>ジョブのマイルストーン到達で獲得できる資格証明書の一覧です。未収集のものは ??? で表示しています。</p>
+  <p>
+    <strong>{collected}</strong> / {total} 件収集
+  </p>
+
+  {jobs.map((job) => (
+    <section aria-labelledby={`job-${job.slug}`}>
+      <h2 id={`job-${job.slug}`}>{job.name}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">レベル</th>
+            <th scope="col">称号</th>
+          </tr>
+        </thead>
+        <tbody>
+          {job.rows.map(({ level, entry }) => (
+            <tr>
+              <th scope="row">Lv.{level}</th>
+              <td>{entry ? <a href={withBase(`/${entry.view.source.slug}`)}>{certificateTitle(entry)}</a> : '???'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  ))}
+</Layout>
