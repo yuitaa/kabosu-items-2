@@ -47,12 +47,11 @@ export function isCertificateSlug(slug: string): boolean {
   return slug.startsWith('certificate/');
 }
 
-/** Tooltip-style name minus the shared `資格証明書「...」` wrapper. */
+/** Extract the quoted certificate title, e.g. `資格証明書「釣り人」` -> `釣り人`. */
 export function certificateTitle(entry: ItemEntry): string {
   const plain = entry.presentation.plainName;
-  const withoutPrefix = plain.replace(/^資格証明書/, '').trim();
-  const title = withoutPrefix.replace(/^「(.*)」$/, '$1').trim();
-  return title || plain;
+  const quoted = plain.match(/「([^」]*)」/);
+  return quoted?.[1]?.trim() || plain;
 }
 
 assertValidCertificates();
