@@ -28,10 +28,7 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
           </div>
           <div class="item-firework-details">
             {explosion.colors.map((color) => (
-              <div class="item-firework-color">
-                <span class="item-swatch" style={`background-color: ${color.hex}`} />
-                {color.name ?? color.hex}
-              </div>
+              <div class="item-firework-color">{color.name ?? color.hex}</div>
             ))}
             {explosion.fadeColors.length > 0 && (
               <div class="item-firework-color">
@@ -39,7 +36,6 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
                 {explosion.fadeColors.map((color, index) => (
                   <>
                     {index > 0 && ' '}
-                    <span class="item-swatch" style={`background-color: ${color.hex}`} />
                     {color.name ?? color.hex}
                   </>
                 ))}
@@ -77,31 +73,23 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
   {aboveLoreExtras.length > 0 && (
     <div class="item-effect-group">
       {aboveLoreExtras.map((extra) => (
-        <div class="item-extra">
-          {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
-          {extra.text}
-        </div>
+        <div class="item-extra">{extra.text}</div>
       ))}
     </div>
   )}
 
   {presentation.banner && (
     <div class="item-effect-group">
-      {presentation.banner.baseColor && presentation.banner.baseColorHex && (
+      {presentation.banner.baseColor && (
         <div class="item-extra">
-          {presentation.banner.baseColorLabel}{' '}
-          <span class="item-swatch" style={`background-color: ${presentation.banner.baseColorHex}`} />
-          {presentation.banner.baseColor}
+          {presentation.banner.baseColorLabel} {presentation.banner.baseColor}
         </div>
       )}
       {presentation.banner.patterns.length > 0 && (
         <div class="item-banner-patterns">
           <div class="item-banner-header">{presentation.banner.patternsLabel}</div>
           {presentation.banner.patterns.map((pattern) => (
-            <div class="item-extra">
-              <span class="item-swatch" style={`background-color: ${pattern.color}`} />
-              {pattern.text}
-            </div>
+            <div class="item-extra">{pattern.text}</div>
           ))}
         </div>
       )}
@@ -134,10 +122,7 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
   {belowLoreExtras.length > 0 && (
     <div class="item-effect-group">
       {belowLoreExtras.map((extra) => (
-        <div class="item-extra">
-          {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
-          {extra.text}
-        </div>
+        <div class="item-extra">{extra.text}</div>
       ))}
     </div>
   )}
@@ -160,15 +145,6 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
   .item-lore-group + .item-effect-group,
   .item-name + .item-lore-group {
     margin-block-start: 1em;
-  }
-
-  .item-swatch {
-    display: inline-block;
-    inline-size: 1em;
-    block-size: 1em;
-    border: 1px solid currentColor;
-    vertical-align: middle;
-    margin-inline-end: 0.35em;
   }
 
   .item-firework-flight,

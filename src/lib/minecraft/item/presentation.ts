@@ -40,8 +40,6 @@ export interface PotionRow {
 
 export interface ExtraRow {
   text: string;
-  /** Hex color for a swatch (currently only used by `dyed_color`). */
-  swatch?: string;
   /** Unbreakable and dye lines are shown below lore in the tooltip. */
   afterLore?: boolean;
 }
@@ -76,14 +74,11 @@ export interface FireworkInfo {
 export interface BannerPatternRow {
   /** Combined pattern and color, e.g. `左上向きに白色の斜め帯`. */
   text: string;
-  /** Pattern color as `#RRGGBB` for the swatch. */
-  color: string;
 }
 
 export interface BannerInfo {
   /** Translated base color, e.g. `薄灰色`, or `null` when unset. */
   baseColor: string | null;
-  baseColorHex: string | null;
   /** Label shown before the base color. */
   baseColorLabel: string;
   /** Header shown above the banner pattern list. */
@@ -152,7 +147,6 @@ const DYE_COLORS = [
 ] as const;
 
 const DYE_COLOR_BY_HEX = new Map<string, string>(DYE_COLORS.map(({ id, hex }) => [hex, id]));
-const DYE_COLOR_BY_ID = new Map<string, string>(DYE_COLORS.map(({ id, hex }) => [id, hex]));
 
 const OPERATIONS = {
   add_value: { positive: 'attribute.modifier.plus.0', negative: 'attribute.modifier.take.0', scale: 1 },
@@ -211,7 +205,7 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
     enchantments: buildEnchantments(components, t),
     attributes: buildAttributes(components, t),
     potions: buildPotions(components, t),
-    extras: buildExtras(components, t, trim, dyedColor),
+    extras: buildExtras(components, t, trim),
   };
 }
 
@@ -489,7 +483,7 @@ function buildBanner(components: Record<string, unknown>, t: Translator): Banner
         `block.minecraft.banner.${patternId}.${colorId}`,
         `${t(`color.minecraft.${colorId}`, colorId)}の${patternId}`,
       );
-      patterns.push({ text, color: DYE_COLOR_BY_ID.get(colorId) ?? '#FFFFFF' });
+      patterns.push({ text });
     }
   }
 
@@ -499,19 +493,13 @@ function buildBanner(components: Record<string, unknown>, t: Translator): Banner
 
   return {
     baseColor: baseColorId === null ? null : t(`color.minecraft.${baseColorId}`, baseColorId),
-    baseColorHex: baseColorId === null ? null : (DYE_COLOR_BY_ID.get(baseColorId) ?? '#FFFFFF'),
     baseColorLabel: 'ベースカラー',
     patternsLabel: '旗の模様',
     patterns,
   };
 }
 
-function buildExtras(
-  components: Record<string, unknown>,
-  t: Translator,
-  trim: TrimInfo | null,
-  dyedColor: string | null,
-): ExtraRow[] {
+function buildExtras(components: Record<string, unknown>, t: Translator, trim: TrimInfo | null): ExtraRow[] {
   const extras: ExtraRow[] = [];
 
   if (components['minecraft:unbreakable'] !== undefined) {
@@ -523,7 +511,7 @@ function buildExtras(
   }
 
   if (components['minecraft:dyed_color'] !== undefined) {
-    extras.push({ text: t('item.dyed'), swatch: dyedColor ?? undefined, afterLore: true });
+    extras.push({ text: t('item.dyed'), afterLore: true });
   }
 
   return extras;
