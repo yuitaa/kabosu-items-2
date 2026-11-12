@@ -50,7 +50,6 @@ export interface ExtraRow {
 export interface ItemPresentation {
   name: TextSpan[];
   plainName: string;
-  hideTooltip: boolean;
   unbreakable: boolean;
   lore: TextSpan[][];
   enchantments: EnchantmentRow[];
@@ -90,7 +89,6 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
     return {
       name: [{ text: fallbackName }],
       plainName: fallbackName,
-      hideTooltip: false,
       unbreakable: false,
       lore: [],
       enchantments: [],
@@ -101,14 +99,12 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
   }
 
   const components = (item.components ?? {}) as Record<string, unknown>;
-  const display = components['minecraft:tooltip_display'];
   const unbreakable = components['minecraft:unbreakable'] !== undefined;
   const name = buildName(item.id, components, t);
 
   return {
     name,
     plainName: name.map((span) => span.text).join('') || fallbackName,
-    hideTooltip: isRecord(display) && Boolean(display.hide_tooltip),
     unbreakable,
     lore: buildLore(components['minecraft:lore']),
     enchantments: buildEnchantments(components, t),

@@ -11,10 +11,6 @@ const { presentation } = Astro.props;
 ---
 
 <div class="item-preview">
-  {presentation.hideTooltip && (
-    <p class="item-tooltip-note">このアイテムはゲーム内でツールチップが非表示に設定されています。</p>
-  )}
-
   <div class="item-preview-panel" data-panel="tooltip">
     <h3>ツールチップ</h3>
     <ItemTooltip presentation={presentation} />
