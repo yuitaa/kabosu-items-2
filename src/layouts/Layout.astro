@@ -14,13 +14,23 @@ import {
   withBase,
 } from '@/lib/site';
 
+import '@/styles/global.css';
+
 interface Props {
   title?: string;
   description?: string;
   type?: 'website' | 'article';
+  class?: string;
+  'class:list'?: unknown;
 }
 
-const { title = SITE_NAME, description = SITE_DESCRIPTION, type = 'website' } = Astro.props;
+const {
+  title = SITE_NAME,
+  description = SITE_DESCRIPTION,
+  type = 'website',
+  class: className,
+  'class:list': classNameList,
+} = Astro.props;
 const canonical = canonicalUrl(Astro.url.pathname);
 const ogImage = absoluteUrl(OG_IMAGE);
 ---
@@ -60,22 +70,29 @@ const ogImage = absoluteUrl(OG_IMAGE);
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
-    <header>
-      <a href={withBase('/')}>Kabosu Items 2</a>
-      <nav aria-label="メインナビゲーション">
-        <a href={withBase('/')}>アイテム一覧</a>
-        <a href={withBase('/certificate/')}>証明書一覧</a>
-        <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+    <header class="sticky top-0 grid p-2 text-lg shadow backdrop-blur-lg md:flex md:justify-between">
+      <a href={withBase('/')} class="font-bold">
+        🍋Kabosu Items 2
+      </a>
+      <nav aria-label="メインナビゲーション" class="flex gap-4">
+        <a href={withBase('/')} class="hover:underline">
+          アイテム
+        </a>
+        <a href={withBase('/certificate/')} class="hover:underline">
+          証明書
+        </a>
+        <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" class="hover:underline">
           GitHub
         </a>
-        <a href={KABOSU_URL} target="_blank" rel="noopener noreferrer">
+        <a href={KABOSU_URL} target="_blank" rel="noopener noreferrer" class="hover:underline">
           かぼす公式HP
         </a>
       </nav>
     </header>
-
-    <main>
-      <slot />
-    </main>
+    <div class="flex justify-center px-2">
+      <main class:list={['w-full max-w-220 py-2', className, classNameList]}>
+        <slot />
+      </main>
+    </div>
   </body>
 </html>

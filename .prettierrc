@@ -4,11 +4,13 @@
   "singleQuote": true,
   "bracketSameLine": true,
   "printWidth": 120,
+  "tailwindStylesheet": "./src/styles/global.css",
   "plugins": [
     "prettier-plugin-astro",
-    "prettier-plugin-tailwindcss",
     "prettier-plugin-organize-imports",
-    "prettier-plugin-astro-organize-imports"
+    "prettier-plugin-astro-organize-imports",
+    "prettier-plugin-tailwindcss",
+    "./scripts/prettier-plugin-astro-tailwind.mjs"
   ],
   "overrides": [
     {

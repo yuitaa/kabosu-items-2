@@ -45,50 +45,114 @@ const entries = regularEntries.map((entry) => {
 });
 ---
 
-<Layout title="Kabosu Items 2">
-  <h1>Kabosu Items 2</h1>
+<Layout title="Kabosu Items 2" class:list={['grid', 'gap-2']}>
+  <h1 class="text-2xl">Kabosu Items 2</h1>
   <p>かぼすサーバーのアイテム情報を閲覧できる非公式サイトです。</p>
 
-  <form class="item-filters">
-    <div>
-      <label for="item-search">検索</label>
-      <input id="item-search" name="q" type="search" placeholder="アイテム名 / Minecraft ID / コンポーネントID" />
+  <form class="item-filters grid gap-2">
+    <div class="grid grid-cols-12">
+      <label for="item-search" class="col-span-2 rounded-l-lg border border-gray-300 bg-gray-200 p-2">
+        検索
+      </label>
+      <input
+        id="item-search"
+        class="col-span-10 rounded-r-lg border border-l-0 border-gray-300 p-2"
+        name="q"
+        type="search"
+        placeholder="アイテム名 / Minecraft ID / コンポーネントID"
+      />
     </div>
 
-    <fieldset>
-      <legend>エンチャント</legend>
+    <fieldset class="border-0 p-0">
+      <legend class="mb-2 font-bold">エンチャント</legend>
 
-      <label for="enchant-type">種類</label>
-      <select id="enchant-type" name="enchantment">
-        <option value="">すべて</option>
-        {[...enchantOptions].map(([id, name]) => (
-          <option value={id}>{name}</option>
-        ))}
-      </select>
+      <div class="grid gap-2">
+        <div class="grid grid-cols-12">
+          <label for="enchant-type" class="col-span-2 rounded-l-lg border border-gray-300 bg-gray-200 p-2">
+            種類
+          </label>
+          <select
+            id="enchant-type"
+            class="col-span-10 rounded-r-lg border border-l-0 border-gray-300 p-2"
+            name="enchantment">
+            <option value="">すべて</option>
+            {[...enchantOptions].map(([id, name]) => (
+              <option value={id}>{name}</option>
+            ))}
+          </select>
+        </div>
 
-      <label for="enchant-min">最小レベル</label>
-      <input id="enchant-min" name="enchantmentMin" type="number" min="0" inputmode="numeric" />
-
-      <label for="enchant-max">最大レベル</label>
-      <input id="enchant-max" name="enchantmentMax" type="number" min="0" inputmode="numeric" />
+        <div class="grid grid-cols-12">
+          <span class="col-span-2 rounded-l-lg border border-gray-300 bg-gray-200 p-2">レベル</span>
+          <div class="col-span-10 grid grid-cols-2">
+            <input
+              id="enchant-min"
+              class="min-w-0 border border-l-0 border-gray-300 p-2"
+              name="enchantmentMin"
+              type="number"
+              min="0"
+              inputmode="numeric"
+              placeholder="最小"
+              aria-label="最小レベル"
+            />
+            <input
+              id="enchant-max"
+              class="min-w-0 rounded-r-lg border border-l-0 border-gray-300 p-2"
+              name="enchantmentMax"
+              type="number"
+              min="0"
+              inputmode="numeric"
+              placeholder="最大"
+              aria-label="最大レベル"
+            />
+          </div>
+        </div>
+      </div>
     </fieldset>
 
-    <fieldset>
-      <legend>追加効果</legend>
+    <fieldset class="border-0 p-0">
+      <legend class="mb-2 font-bold">追加効果</legend>
 
-      <label for="attribute-type">種類</label>
-      <select id="attribute-type" name="attribute">
-        <option value="">すべて</option>
-        {[...attributeOptions].map(([id, name]) => (
-          <option value={id}>{name}</option>
-        ))}
-      </select>
+      <div class="grid gap-2">
+        <div class="grid grid-cols-12">
+          <label for="attribute-type" class="col-span-2 rounded-l-lg border border-gray-300 bg-gray-200 p-2">
+            種類
+          </label>
+          <select
+            id="attribute-type"
+            class="col-span-10 rounded-r-lg border border-l-0 border-gray-300 p-2"
+            name="attribute">
+            <option value="">すべて</option>
+            {[...attributeOptions].map(([id, name]) => (
+              <option value={id}>{name}</option>
+            ))}
+          </select>
+        </div>
 
-      <label for="attribute-min">最小値</label>
-      <input id="attribute-min" name="attributeMin" type="number" inputmode="decimal" />
-
-      <label for="attribute-max">最大値</label>
-      <input id="attribute-max" name="attributeMax" type="number" inputmode="decimal" />
+        <div class="grid grid-cols-12">
+          <span class="col-span-2 rounded-l-lg border border-gray-300 bg-gray-200 p-2">値</span>
+          <div class="col-span-10 grid grid-cols-2">
+            <input
+              id="attribute-min"
+              class="min-w-0 border border-l-0 border-gray-300 p-2"
+              name="attributeMin"
+              type="number"
+              inputmode="decimal"
+              placeholder="最小"
+              aria-label="最小値"
+            />
+            <input
+              id="attribute-max"
+              class="min-w-0 rounded-r-lg border border-l-0 border-gray-300 p-2"
+              name="attributeMax"
+              type="number"
+              inputmode="decimal"
+              placeholder="最大"
+              aria-label="最大値"
+            />
+          </div>
+        </div>
+      </div>
     </fieldset>
   </form>
 
@@ -98,8 +162,16 @@ const entries = regularEntries.map((entry) => {
 
   <ul class="item-list">
     {entries.map(({ view, presentation, href, search, enchantments, attributes }) => (
-      <li data-item data-search={search} data-enchantments={enchantments} data-attributes={attributes}>
-        <a href={href}>{presentation.plainName}</a> <code>{view.item?.id ?? view.source.slug}</code>
+      <li
+        data-item
+        data-search={search}
+        data-enchantments={enchantments}
+        data-attributes={attributes}
+        class="flex justify-between px-2 py-1 odd:bg-gray-50">
+        <a href={href} class="underline">
+          {presentation.plainName}
+        </a>
+        <code class="hidden text-gray-500 sm:block">{view.item?.id ?? view.source.slug}</code>
       </li>
     ))}
   </ul>

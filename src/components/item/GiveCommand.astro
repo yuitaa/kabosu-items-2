@@ -7,11 +7,10 @@ const { command } = Astro.props;
 ---
 
 <div class="give-command">
-  <pre class="give-command-code"><code data-give-command>{command}</code></pre>
-  <button type="button" class="give-command-copy" data-copy-command>
+  <button type="button" class="give-command-copy mb-2 bg-gray-300 px-2" data-copy-command>
     コピー
   </button>
-  <p class="give-command-status" data-copy-status aria-live="polite"></p>
+  <pre class="give-command-code bg-gray-50 p-2"><code data-give-command>{command}</code></pre>
 </div>
 
 <script>
@@ -21,26 +20,19 @@ const { command } = Astro.props;
     button.addEventListener('click', async () => {
       const container = button.closest('.give-command');
       const code = container?.querySelector('[data-give-command]');
-      const status = container?.querySelector('[data-copy-status]');
       if (!code) {
         return;
       }
 
       try {
         await navigator.clipboard.writeText(code.textContent ?? '');
-        if (status) {
-          status.textContent = 'コピーしました';
-        }
+        button.textContent = 'コピーしました';
       } catch {
-        if (status) {
-          status.textContent = 'コピーできませんでした';
-        }
+        button.textContent = 'コピーできませんでした';
       }
 
       window.setTimeout(() => {
-        if (status) {
-          status.textContent = '';
-        }
+        button.textContent = 'コピー';
       }, 2000);
     });
   }

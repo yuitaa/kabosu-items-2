@@ -11,13 +11,11 @@ const { presentation } = Astro.props;
 ---
 
 <div class="item-preview">
-  <div class="item-preview-panel" data-panel="tooltip">
-    <h3>ツールチップ</h3>
+  <div class="item-preview-panel mb-2" data-panel="tooltip">
     <ItemTooltip presentation={presentation} />
   </div>
 
   <div class="item-preview-panel" data-panel="ansi">
-    <h3>Discord用ANSI</h3>
     <DiscordAnsi presentation={presentation} />
   </div>
 </div>

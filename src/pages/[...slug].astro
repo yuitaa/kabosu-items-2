@@ -43,30 +43,31 @@ const description = loreText || undefined;
 ---
 
 <Layout title={`${presentation.plainName} | Kabosu Items 2`} description={description} type="article">
-  <h1>
+  <h1 class="mb-2 border-l-4 border-emerald-700 bg-gray-900 p-2 pl-4 text-2xl">
     <TextSpans spans={presentation.name} />
   </h1>
 
-  <section aria-labelledby="item-preview-heading">
-    <h2 id="item-preview-heading">プレビュー</h2>
+  <section aria-labelledby="item-preview-heading" class="float-right w-full md:ml-2 md:w-80">
     <ItemPreview presentation={presentation} />
   </section>
 
-  <section aria-labelledby="item-basic-heading">
-    <h2 id="item-basic-heading">基本情報</h2>
-    <dl>
+  <section aria-labelledby="item-basic-heading mb-2">
+    <h2 id="item-basic-heading" class="text-xl font-bold">
+      情報
+    </h2>
+    <dl class="pl-6">
       <dt>アイテム名</dt>
-      <dd>{presentation.itemName}</dd>
+      <dd class="pl-6 text-gray-600">{presentation.itemName}</dd>
       <dt>Minecraft ID</dt>
-      <dd>
+      <dd class="pl-6 text-gray-600">
         <code>{view.item?.id ?? view.source.slug}</code>
       </dd>
       <dt>不可壊</dt>
-      <dd>{presentation.unbreakable ? 'あり' : 'なし'}</dd>
+      <dd class="pl-6 text-gray-600">{presentation.unbreakable ? 'あり' : 'なし'}</dd>
       {presentation.dyedColor && (
         <>
           <dt>染色済み</dt>
-          <dd>
+          <dd class="pl-6 text-gray-600">
             <span class="item-swatch" style={`background-color: ${presentation.dyedColor}`} aria-hidden="true" />
             {presentation.dyedColor}
           </dd>
@@ -74,7 +75,7 @@ const description = loreText || undefined;
       )}
       {presentation.trim && (
         <>
-          <dt>装飾</dt>
+          <dt class="pl-6 text-gray-600">装飾</dt>
           <dd>{presentation.trim.text}</dd>
         </>
       )}
@@ -82,55 +83,47 @@ const description = loreText || undefined;
   </section>
 
   {presentation.enchantments.length > 0 && (
-    <section aria-labelledby="item-enchantments-heading">
-      <h2 id="item-enchantments-heading">エンチャント</h2>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">名前</th>
-            <th scope="col">レベル</th>
-          </tr>
-        </thead>
-        <tbody>
-          {presentation.enchantments.map((row) => (
-            <tr>
-              <td>
-                <a href={enchantmentWikiUrl(row.name)}>{row.name}</a>
-              </td>
-              <td>{row.level}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <section aria-labelledby="item-enchantments-heading mb-2">
+      <h2 id="item-enchantments-heading" class="text-xl font-bold">
+        エンチャント
+      </h2>
+      <div class="grid grid-cols-2 pl-6">
+        <div class="bg-gray-200 px-2">名前</div>
+        <div class="bg-gray-200 px-2">レベル</div>
+
+        {presentation.enchantments.map((row) => (
+          <>
+            <div class="px-2 py-1 underline">
+              <a href={enchantmentWikiUrl(row.name)}>{row.name}</a>
+            </div>
+            <div class="px-2 py-1">{row.level}</div>
+          </>
+        ))}
+      </div>
     </section>
   )}
 
   {attributeGroups.length > 0 && (
     <section aria-labelledby="item-attributes-heading">
-      <h2 id="item-attributes-heading">追加効果</h2>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">名前</th>
-            <th scope="col">値</th>
-          </tr>
-        </thead>
+      <h2 id="item-attributes-heading" class="text-xl font-bold">
+        追加効果
+      </h2>
+      <div class="grid grid-cols-2 pl-6">
+        <div class="bg-gray-200 px-2">名前</div>
+        <div class="bg-gray-200 px-2">値</div>
+
         {attributeGroups.map((group) => (
-          <tbody>
-            <tr>
-              <th scope="rowgroup" colspan="2">
-                {group.header}
-              </th>
-            </tr>
+          <>
+            <div class="col-span-2 bg-gray-100 px-2 py-1 font-bold">{group.header}</div>
             {group.rows.map((row) => (
-              <tr>
-                <td>{row.name}</td>
-                <td>{row.value}</td>
-              </tr>
+              <>
+                <div class="px-2 py-1">{row.name}</div>
+                <div class="px-2 py-1">{row.value}</div>
+              </>
             ))}
-          </tbody>
+          </>
         ))}
-      </table>
+      </div>
     </section>
   )}
 
@@ -160,14 +153,20 @@ const description = loreText || undefined;
     </section>
   )}
 
-  <section aria-labelledby="item-give-heading">
-    <h2 id="item-give-heading">Give Command</h2>
-    <GiveCommand command={giveCommand} />
+  <section aria-labelledby="item-give-heading mb-2">
+    <h2 id="item-give-heading" class="text-xl font-bold">
+      Give Command
+    </h2>
+    <div class="pl-6">
+      <GiveCommand command={giveCommand} />
+    </div>
   </section>
 
   <section aria-labelledby="item-components-heading">
-    <h2 id="item-components-heading">コンポーネント</h2>
-    {componentsSnbt ? <SnbtCode code={componentsSnbt} /> : <p>コンポーネントはありません。</p>}
+    <h2 id="item-components-heading" class="text-xl font-bold">
+      コンポーネント
+    </h2>
+    <div class="pl-4">{componentsSnbt ? <SnbtCode code={componentsSnbt} /> : <p>コンポーネントはありません。</p>}</div>
   </section>
 </Layout>
 

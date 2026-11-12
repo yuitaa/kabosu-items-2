@@ -10,28 +10,28 @@ const jobs = certificateJobs.map((job) => ({
 ---
 
 <Layout title="資格証明書一覧 | Kabosu Items 2" description="かぼすサーバーのジョブで獲得できる資格証明書の一覧です。">
-  <h1>資格証明書一覧</h1>
-  <p>ジョブのマイルストーン到達で獲得できる資格証明書の一覧です。未収集のものは ??? で表示しています。</p>
-
+  <h1 class="text-2xl font-bold">資格証明書</h1>
   {jobs.map((job) => (
-    <section aria-labelledby={`job-${job.slug}`}>
-      <h2 id={`job-${job.slug}`}>{job.name}</h2>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">レベル</th>
-            <th scope="col">称号</th>
-          </tr>
-        </thead>
-        <tbody>
-          {job.rows.map(({ level, entry }) => (
-            <tr>
-              <th scope="row">Lv.{level}</th>
-              <td>{entry ? <a href={withBase(`/${entry.view.source.slug}`)}>{certificateTitle(entry)}</a> : '???'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <section aria-labelledby={`job-${job.slug}`} class="mt-2 pl-6">
+      <h2 id={`job-${job.slug}`} class="text-xl">
+        {job.name}
+      </h2>
+      <div class="pl-6">
+        {job.rows.map(({ level, entry }) => (
+          <div>
+            <span class="mr-4 font-bold">Lv.{level}</span>
+            <span>
+              {entry ? (
+                <a href={withBase(`/${entry.view.source.slug}`)} class="underline">
+                  {certificateTitle(entry)}
+                </a>
+              ) : (
+                <span class="text-gray-600">???</span>
+              )}
+            </span>
+          </div>
+        ))}
+      </div>
     </section>
   ))}
 </Layout>

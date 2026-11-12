@@ -11,16 +11,13 @@ const ansi = buildDiscordAnsi(presentation);
 ---
 
 <div class="discord-ansi">
-  <p>
-    Discord の <code>ansi</code> コードブロック用のテキストです。そのまま貼り付けると色付きで表示されます。 Discord
-    が対応しているのは太字・下線と8色までなので、斜体・打ち消し線・16進カラーは近似されます。
-  </p>
+  <p class="mb-2">Discordへ共有用のテキストです。</p>
 
-  <button type="button" data-copy-target="discord-ansi-code">
+  <button type="button" data-copy-target="discord-ansi-code" class="w-full bg-amber-300 text-center">
     コピー
   </button>
 
-  <pre><code id="discord-ansi-code">{ansi}</code></pre>
+  <pre class="overflow-hidden bg-amber-50 p-2 text-gray-700"><code id="discord-ansi-code">{ansi}</code></pre>
 </div>
 
 <script>
