@@ -79,7 +79,7 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
   )}
 
   {presentation.banner && (
-    <div class="item-effect-group">
+    <div class="item-effect-group item-banner">
       {presentation.banner.baseColor && (
         <div class="item-extra">
           {presentation.banner.baseColorLabel} {presentation.banner.baseColor}
@@ -158,8 +158,9 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
   }
 
   .item-firework-color,
-  .item-firework-effect {
-    color: #5555ff;
+  .item-firework-effect,
+  .item-banner .item-extra {
+    color: #aaaaaa;
   }
 
   .item-firework-explosion + .item-firework-explosion {
