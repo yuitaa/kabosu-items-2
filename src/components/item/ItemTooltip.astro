@@ -21,7 +21,7 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
     <div class="item-effect-group">
       {presentation.enchantments.map((row) => (
         <div class="item-enchantment">
-          {row.name} {row.level}
+          {row.name} {row.levelLabel}
         </div>
       ))}
     </div>
@@ -31,7 +31,7 @@ const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
     <div class="item-effect-group">
       {presentation.potions.map((row) => (
         <div class="item-potion">
-          {[row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
+          {[row.name, row.levelLabel, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
         </div>
       ))}
     </div>

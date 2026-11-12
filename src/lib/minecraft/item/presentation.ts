@@ -2,6 +2,7 @@ import type { TextComponent, TextSpan } from '@/lib/minecraft/item-components/te
 import { normalizeTextComponent } from '@/lib/minecraft/item-components/text';
 import type { ItemStack } from '@/lib/minecraft/item/types';
 import { formatMessage } from '@/lib/minecraft/text/format';
+import { toRoman } from '@/lib/minecraft/text/roman';
 import type { Translator } from '@/lib/minecraft/text/translate';
 
 export interface EnchantmentRow {
@@ -9,6 +10,8 @@ export interface EnchantmentRow {
   name: string;
   level: string;
   levelValue: number;
+  /** Localized level for the tooltip; falls back to a generated Roman numeral. */
+  levelLabel: string;
 }
 
 export interface AttributeRow {
@@ -30,6 +33,8 @@ export interface AttributeGroup {
 export interface PotionRow {
   name: string;
   level: string;
+  /** Localized level for the tooltip; empty for the base potion name. */
+  levelLabel: string;
   duration: string;
 }
 
@@ -185,6 +190,7 @@ function buildEnchantments(components: Record<string, unknown>, t: Translator): 
         name: t(resourceKey('enchantment', id), id),
         level: String(level),
         levelValue: level,
+        levelLabel: localizeLevel(level, t),
       },
     ];
   });
@@ -250,6 +256,7 @@ function buildPotions(components: Record<string, unknown>, t: Translator): Potio
     rows.push({
       name: t(`item.minecraft.potion.effect.${stripNamespace(contents.potion)}`, contents.potion),
       level: '',
+      levelLabel: '',
       duration: '',
     });
   }
@@ -264,6 +271,7 @@ function buildPotions(components: Record<string, unknown>, t: Translator): Potio
       rows.push({
         name: t(resourceKey('effect', effect.id), effect.id),
         level: String(level),
+        levelLabel: localizeLevel(level, t),
         duration: typeof effect.duration === 'number' ? formatDuration(effect.duration) : '',
       });
     }
@@ -319,6 +327,17 @@ function rgbToHex(value: unknown[]): string | undefined {
 
 function formatNumber(value: number): string {
   return String(Math.round(value * 100) / 100);
+}
+
+/**
+ * Tooltip levels use the Japanese translation when one exists. Levels past
+ * the bundled translations (1-10) are converted to Roman numerals here.
+ */
+function localizeLevel(value: number, t: Translator): string {
+  if (value < 1) {
+    return '';
+  }
+  return t(`enchantment.level.${value}`, '') || toRoman(value);
 }
 
 function formatDuration(ticks: number): string {
