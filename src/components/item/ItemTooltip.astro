@@ -15,37 +15,76 @@ const attributeGroups = groupAttributes(presentation.attributes);
     <TextSpans spans={presentation.name} />
   </div>
 
-  {presentation.enchantments.map((row) => (
-    <div class="item-enchantment">
-      {row.name} {row.level}
-    </div>
-  ))}
-
-  {attributeGroups.map((group) => (
-    <div class="item-attribute-group">
-      <div class="item-attribute-header">{group.header}</div>
-      {group.rows.map((row) => (
-        <div class="item-attribute">{row.text}</div>
+  {presentation.enchantments.length > 0 && (
+    <div class="item-effect-group">
+      {presentation.enchantments.map((row) => (
+        <div class="item-enchantment">
+          {row.name} {row.level}
+        </div>
       ))}
     </div>
-  ))}
+  )}
 
-  {presentation.potions.map((row) => (
-    <div class="item-potion">
-      {[row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
+  {attributeGroups.length > 0 && (
+    <div class="item-effect-group">
+      {attributeGroups.map((group) => (
+        <div class="item-attribute-group">
+          <div class="item-attribute-header">{group.header}</div>
+          {group.rows.map((row) => (
+            <div class="item-attribute">{row.text}</div>
+          ))}
+        </div>
+      ))}
     </div>
-  ))}
+  )}
 
-  {presentation.extras.map((extra) => (
-    <div class="item-extra">
-      {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
-      {extra.text}
+  {presentation.potions.length > 0 && (
+    <div class="item-effect-group">
+      {presentation.potions.map((row) => (
+        <div class="item-potion">
+          {[row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
+        </div>
+      ))}
     </div>
-  ))}
+  )}
 
-  {presentation.lore.map((line) => (
-    <div class="item-lore">
-      <TextSpans spans={line} />
+  {presentation.extras.length > 0 && (
+    <div class="item-effect-group">
+      {presentation.extras.map((extra) => (
+        <div class="item-extra">
+          {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
+          {extra.text}
+        </div>
+      ))}
     </div>
-  ))}
+  )}
+
+  {presentation.lore.length > 0 && (
+    <div class="item-lore-group">
+      {presentation.lore.map((line) => (
+        <div class="item-lore">
+          <TextSpans spans={line} />
+        </div>
+      ))}
+    </div>
+  )}
 </div>
+
+<style>
+  .item-enchantment,
+  .item-attribute-header {
+    color: #aaaaaa;
+  }
+
+  .item-attribute,
+  .item-potion,
+  .item-extra {
+    color: #5555ff;
+  }
+
+  .item-effect-group + .item-effect-group,
+  .item-effect-group + .item-lore-group,
+  .item-name + .item-lore-group {
+    margin-block-start: 1em;
+  }
+</style>
