@@ -131,27 +131,24 @@ const ogImageAlt = `「${presentation.plainName}」のアイテムツールチ�
 
   {presentation.potions.length > 0 && (
     <section aria-labelledby="item-potions-heading">
-      <h2 id="item-potions-heading">ポーション効果</h2>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">名前</th>
-            <th scope="col">レベル</th>
-            <th scope="col">時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          {presentation.potions.map((row) => (
-            <tr>
-              <td>
-                <a href={effectWikiUrl(row.name)}>{row.name}</a>
-              </td>
-              <td>{row.level}</td>
-              <td>{row.duration}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h2 id="item-potions-heading" class="text-xl font-bold">
+        ポーション効果
+      </h2>
+      <div class="grid grid-cols-3 pl-6">
+        <div class="bg-gray-200 px-2">名前</div>
+        <div class="bg-gray-200 px-2">レベル</div>
+        <div class="bg-gray-200 px-2">時間</div>
+
+        {presentation.potions.map((row) => (
+          <>
+            <div class="px-2 py-1 underline">
+              <a href={effectWikiUrl(row.name)}>{row.name}</a>
+            </div>
+            <div class="px-2 py-1">{row.level}</div>
+            <div class="px-2 py-1">{row.duration}</div>
+          </>
+        ))}
+      </div>
     </section>
   )}
 
