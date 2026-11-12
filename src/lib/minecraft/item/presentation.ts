@@ -10,7 +10,7 @@ export interface EnchantmentRow {
   name: string;
   level: string;
   levelValue: number;
-  /** Localized level for the tooltip; falls back to a generated Roman numeral. */
+  /** Roman numeral shown in the tooltip. */
   levelLabel: string;
 }
 
@@ -33,7 +33,7 @@ export interface AttributeGroup {
 export interface PotionRow {
   name: string;
   level: string;
-  /** Localized level for the tooltip; empty for the base potion name. */
+  /** Roman numeral shown in the tooltip; empty for the base potion name. */
   levelLabel: string;
   duration: string;
 }
@@ -190,7 +190,7 @@ function buildEnchantments(components: Record<string, unknown>, t: Translator): 
         name: t(resourceKey('enchantment', id), id),
         level: String(level),
         levelValue: level,
-        levelLabel: localizeLevel(level, t),
+        levelLabel: toRoman(level),
       },
     ];
   });
@@ -271,7 +271,7 @@ function buildPotions(components: Record<string, unknown>, t: Translator): Potio
       rows.push({
         name: t(resourceKey('effect', effect.id), effect.id),
         level: String(level),
-        levelLabel: localizeLevel(level, t),
+        levelLabel: toRoman(level),
         duration: typeof effect.duration === 'number' ? formatDuration(effect.duration) : '',
       });
     }
@@ -327,17 +327,6 @@ function rgbToHex(value: unknown[]): string | undefined {
 
 function formatNumber(value: number): string {
   return String(Math.round(value * 100) / 100);
-}
-
-/**
- * Tooltip levels use the Japanese translation when one exists. Levels past
- * the bundled translations (1-10) are converted to Roman numerals here.
- */
-function localizeLevel(value: number, t: Translator): string {
-  if (value < 1) {
-    return '';
-  }
-  return t(`enchantment.level.${value}`, '') || toRoman(value);
 }
 
 function formatDuration(ticks: number): string {
