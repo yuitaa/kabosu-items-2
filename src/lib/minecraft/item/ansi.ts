@@ -36,7 +36,7 @@ export function buildDiscordAnsi(presentation: ItemPresentation): string {
   if (presentation.enchantments.length > 0) {
     lines.push('エンチャント');
     for (const row of presentation.enchantments) {
-      lines.push(` - ${row.name} ${row.level}`.trimEnd());
+      lines.push(` - ${row.name} ${row.levelLabel}`.trimEnd());
     }
   }
 
@@ -53,7 +53,7 @@ export function buildDiscordAnsi(presentation: ItemPresentation): string {
   if (presentation.potions.length > 0) {
     lines.push('ポーション効果');
     for (const row of presentation.potions) {
-      const detail = [row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ');
+      const detail = [row.name, row.levelLabel, row.duration && `(${row.duration})`].filter(Boolean).join(' ');
       lines.push(` - ${detail}`);
     }
   }
