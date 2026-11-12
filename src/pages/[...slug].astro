@@ -5,6 +5,7 @@ import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
 import { groupAttributes } from '@/lib/minecraft/item/presentation';
+import { effectWikiUrl, enchantmentWikiUrl } from '@/lib/minecraft/wiki';
 
 export function getStaticPaths() {
   return itemEntries.map(({ view }) => ({
@@ -69,7 +70,9 @@ const description = loreText || undefined;
         <tbody>
           {presentation.enchantments.map((row) => (
             <tr>
-              <td>{row.name}</td>
+              <td>
+                <a href={enchantmentWikiUrl(row.name)}>{row.name}</a>
+              </td>
               <td>{row.level}</td>
             </tr>
           ))}
@@ -121,7 +124,9 @@ const description = loreText || undefined;
         <tbody>
           {presentation.potions.map((row) => (
             <tr>
-              <td>{row.name}</td>
+              <td>
+                <a href={effectWikiUrl(row.name)}>{row.name}</a>
+              </td>
               <td>{row.level}</td>
               <td>{row.duration}</td>
             </tr>
