@@ -148,6 +148,46 @@ const DYE_COLORS = [
 
 const DYE_COLOR_BY_HEX = new Map<string, string>(DYE_COLORS.map(({ id, hex }) => [hex, id]));
 
+/**
+ * Numeric effect ids used by the legacy Bukkit-style `CustomPotionEffects`
+ * format, which stored `PotionEffect` entries in `custom_data` before the
+ * `potion_contents` component existed.
+ */
+const LEGACY_EFFECT_IDS: Record<number, string> = {
+  1: 'speed',
+  2: 'slowness',
+  3: 'haste',
+  4: 'mining_fatigue',
+  5: 'strength',
+  6: 'instant_health',
+  7: 'instant_damage',
+  8: 'jump_boost',
+  9: 'nausea',
+  10: 'regeneration',
+  11: 'resistance',
+  12: 'fire_resistance',
+  13: 'water_breathing',
+  14: 'invisibility',
+  15: 'blindness',
+  16: 'night_vision',
+  17: 'hunger',
+  18: 'weakness',
+  19: 'poison',
+  20: 'wither',
+  21: 'health_boost',
+  22: 'absorption',
+  23: 'saturation',
+  24: 'glowing',
+  25: 'levitation',
+  26: 'luck',
+  27: 'unluck',
+  28: 'slow_falling',
+  29: 'conduit_power',
+  30: 'dolphins_grace',
+  31: 'bad_omen',
+  32: 'hero_of_the_village',
+};
+
 const OPERATIONS = {
   add_value: { positive: 'attribute.modifier.plus.0', negative: 'attribute.modifier.take.0', scale: 1 },
   add_multiplied_base: {
@@ -335,40 +375,91 @@ function formatAttribute(
   };
 }
 
+/**
+ * Collect every effect an item grants, regardless of the format it is stored
+ * in. Modern items use `potion_contents.custom_effects`, older ones keep
+ * Bukkit-style entries in `custom_data`, and food can carry its own effects.
+ */
 function buildPotions(components: Record<string, unknown>, t: Translator): PotionRow[] {
-  const contents = components['minecraft:potion_contents'];
-  if (!isRecord(contents)) {
-    return [];
-  }
-
   const rows: PotionRow[] = [];
+  const seen = new Set<string>();
 
-  if (typeof contents.potion === 'string') {
-    rows.push({
-      name: t(`item.minecraft.potion.effect.${stripNamespace(contents.potion)}`, contents.potion),
-      level: '',
-      levelLabel: '',
-      duration: '',
-    });
+  const addEffect = (id: string, amplifier: number, duration: number | undefined) => {
+    const effectId = id.includes(':') ? id : `minecraft:${id}`;
+    const key = `${effectId}|${amplifier}|${duration ?? ''}`;
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    rows.push(buildEffectRow(t, effectId, amplifier, duration));
+  };
+
+  const contents = components['minecraft:potion_contents'];
+  if (isRecord(contents)) {
+    if (typeof contents.potion === 'string') {
+      rows.push({
+        name: t(`item.minecraft.potion.effect.${stripNamespace(contents.potion)}`, contents.potion),
+        level: '',
+        levelLabel: '',
+        duration: '',
+      });
+    }
+
+    if (Array.isArray(contents.custom_effects)) {
+      for (const effect of contents.custom_effects) {
+        if (!isRecord(effect) || typeof effect.id !== 'string') {
+          continue;
+        }
+        addEffect(effect.id, numberOr(effect.amplifier, 0), optionalNumber(effect.duration));
+      }
+    }
   }
 
-  if (Array.isArray(contents.custom_effects)) {
-    for (const effect of contents.custom_effects) {
+  const customData = components['minecraft:custom_data'];
+  if (isRecord(customData) && Array.isArray(customData.CustomPotionEffects)) {
+    for (const effect of customData.CustomPotionEffects) {
+      if (!isRecord(effect) || typeof effect.Id !== 'number') {
+        continue;
+      }
+      const id = LEGACY_EFFECT_IDS[effect.Id];
+      if (id === undefined) {
+        continue;
+      }
+      addEffect(id, numberOr(effect.Amplifier, 0), optionalNumber(effect.Duration));
+    }
+  }
+
+  const stewEffects = components['minecraft:suspicious_stew_effects'];
+  if (Array.isArray(stewEffects)) {
+    for (const effect of stewEffects) {
       if (!isRecord(effect) || typeof effect.id !== 'string') {
         continue;
       }
-      const amplifier = typeof effect.amplifier === 'number' ? effect.amplifier : 0;
-      const level = amplifier + 1;
-      rows.push({
-        name: t(resourceKey('effect', effect.id), effect.id),
-        level: String(level),
-        levelLabel: toRoman(level),
-        duration: typeof effect.duration === 'number' ? formatDuration(effect.duration) : '',
-      });
+      addEffect(effect.id, numberOr(effect.amplifier, 0), optionalNumber(effect.duration));
+    }
+  }
+
+  const food = components['minecraft:food'];
+  if (isRecord(food) && Array.isArray(food.effects)) {
+    for (const entry of food.effects) {
+      if (!isRecord(entry) || !isRecord(entry.effect) || typeof entry.effect.id !== 'string') {
+        continue;
+      }
+      addEffect(entry.effect.id, numberOr(entry.effect.amplifier, 0), optionalNumber(entry.effect.duration));
     }
   }
 
   return rows;
+}
+
+function buildEffectRow(t: Translator, id: string, amplifier: number, duration: number | undefined): PotionRow {
+  const level = amplifier + 1;
+  return {
+    name: t(resourceKey('effect', id), id),
+    level: String(level),
+    levelLabel: toRoman(level),
+    duration: duration === undefined ? '' : formatDuration(duration),
+  };
 }
 
 function buildTrim(components: Record<string, unknown>, t: Translator): TrimInfo | null {
@@ -542,6 +633,14 @@ function rgbToHex(value: unknown[]): string | undefined {
 
 function formatNumber(value: number): string {
   return String(Math.round(value * 100) / 100);
+}
+
+function numberOr(value: unknown, fallback: number): number {
+  return typeof value === 'number' ? value : fallback;
+}
+
+function optionalNumber(value: unknown): number | undefined {
+  return typeof value === 'number' ? value : undefined;
 }
 
 function formatDuration(ticks: number): string {
