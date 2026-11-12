@@ -9,7 +9,7 @@ const { code } = Astro.props;
 const highlighted = highlightSnbt(code);
 ---
 
-<pre class="snbt-code language-snbt bg-gray-50 p-2"><code class="language-snbt" set:html={highlighted} /></pre>
+<pre class="snbt-code language-snbt overflow-x-auto bg-gray-50 p-2"><code class="language-snbt" set:html={highlighted} /></pre>
 
 <style>
   .snbt-code {
