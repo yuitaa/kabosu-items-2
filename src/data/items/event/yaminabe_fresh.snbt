@@ -1,0 +1,1 @@
+{components: {"minecraft:item_name": {color: "yellow", text: "闇鍋入りボウル（できたて）", bold: 1b}, "minecraft:lore": [{color: "gray", text: "少し変わった味だが、アツアツでおいしい"}], "minecraft:suspicious_stew_effects": [{duration: 100, id: "minecraft:fire_resistance"}, {duration: 20, id: "minecraft:saturation"}]}, count: 1, id: "minecraft:mushroom_stew"}

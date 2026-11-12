@@ -197,6 +197,7 @@ export const componentSchemas = {
   'minecraft:tooltip_display': TooltipDisplay,
   'minecraft:attribute_modifiers': v.array(EntityAttributeModifier),
   'minecraft:food': Food,
+  'minecraft:suspicious_stew_effects': v.array(StatusEffectInstance),
   'minecraft:tool': Tool,
   'minecraft:potion_contents': PotionContents,
   'minecraft:fireworks': Fireworks,
