@@ -183,7 +183,7 @@ function buildEnchantments(components: Record<string, unknown>, t: Translator): 
       {
         id,
         name: t(resourceKey('enchantment', id), id),
-        level: t(`enchantment.level.${level}`, String(level)),
+        level: String(level),
         levelValue: level,
       },
     ];
@@ -263,7 +263,7 @@ function buildPotions(components: Record<string, unknown>, t: Translator): Potio
       const level = amplifier + 1;
       rows.push({
         name: t(resourceKey('effect', effect.id), effect.id),
-        level: t(`enchantment.level.${level}`, String(level)),
+        level: String(level),
         duration: typeof effect.duration === 'number' ? formatDuration(effect.duration) : '',
       });
     }
