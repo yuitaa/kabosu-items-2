@@ -1,5 +1,5 @@
 /** Site-wide metadata shared by the layout and social previews. */
-export const SITE_NAME = 'Kabosu Items';
+export const SITE_NAME = 'Kabosu Items 2';
 export const SITE_DESCRIPTION = 'かぼすサーバーのアイテム情報を閲覧できる非公式サイトです。';
 export const THEME_COLOR = '#16611f';
 export const GITHUB_URL = 'https://github.com/yuitaa/kabosu-items-2';
