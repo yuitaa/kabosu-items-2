@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "特殊な方法で精錬された金属。", italic: 1b}], "minecraft:enchantments": {"minecraft:silk_touch": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {text: "古匠の鋼鉄", italic: 0b}}, count: 1, id: "minecraft:iron_ingot"}

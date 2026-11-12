@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{extra: ["とても熟して"], text: ""}, {extra: ["おいしそうだ。"], text: ""}], "minecraft:enchantments": {"minecraft:silk_touch": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {extra: ["完熟かぼす"], text: ""}}, count: 1, id: "minecraft:magma_cream"}

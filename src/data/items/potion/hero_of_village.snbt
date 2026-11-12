@@ -1,0 +1,1 @@
+{components: {"minecraft:custom_data": {CustomPotionEffects: [{Ambient: 0, Amplifier: 1, Duration: 6000, Id: 32, ShowIcon: 1, ShowParticles: 1}]}, "minecraft:custom_name": {color: "green", italic: 0b, text: "村の英雄ポーション"}, "minecraft:lore": [{color: "white", italic: 1b, text: "あんたがヒーローだ。"}], "minecraft:potion_contents": {custom_color: 10877626}}, count: 1, id: "minecraft:potion"}

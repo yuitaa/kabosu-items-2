@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "#AFEEEE", text: "未知の可能性を持ったしずく。", italic: 0b}, {color: "#AFEEEE", text: "集めると、何か良くないことが起こると言われている。", italic: 0b}], "minecraft:custom_name": {color: "#AFEEEE", text: "再臨のかけら", bold: 1b, italic: 0b}}, count: 1, id: "minecraft:iron_nugget"}

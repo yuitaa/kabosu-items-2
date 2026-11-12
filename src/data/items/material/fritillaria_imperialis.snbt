@@ -1,0 +1,1 @@
+{components: {"minecraft:custom_name": {color: "aqua", italic: 0b, text: "フリチラリア・インペリアリス"}, "minecraft:enchantments": {"minecraft:mending": 1}, "minecraft:lore": [{color: "white", text: "皇帝の名を冠する大きな花。"}], "minecraft:repair_cost": 9999}, count: 1, id: "minecraft:wither_rose"}

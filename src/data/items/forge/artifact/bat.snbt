@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{extra: ["カキーン（擬音）"], text: ""}], "minecraft:enchantments": {"minecraft:knockback": 20}, "minecraft:damage": 54, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {extra: [{text: "ホームランバッド", bold: 1b}], text: ""}, "minecraft:repair_cost": 999}, count: 1, id: "minecraft:wooden_sword"}

@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{extra: ["アストレア王国の"], text: ""}, {extra: ["騎士が纏う防具"], text: ""}], "minecraft:enchantments": {"minecraft:protection": 1}, "minecraft:unbreakable": {}, "minecraft:custom_name": {extra: [{text: "騎士のブーツ", bold: 1b}], text: ""}, "minecraft:repair_cost": 999}, count: 1, id: "minecraft:chainmail_boots"}

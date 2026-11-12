@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "銅に金を混ぜた合金。", italic: 1b}], "minecraft:enchantments": {"minecraft:silk_touch": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {color: "gold", text: "赤銅合金", italic: 0b}}, count: 1, id: "minecraft:copper_ingot"}

@@ -1,0 +1,1 @@
+{components: {"minecraft:damage": 0, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_data": {PublicBukkitValues: {"commanditems:params": {"k:s": 0}, "commanditems:command": "gold_ingot"}}}, count: 1, id: "minecraft:gold_ingot"}

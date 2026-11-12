@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{extra: ["持つと体が軽くなる。"], text: ""}], "minecraft:enchantments": {"minecraft:fortune": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:attribute_modifiers", "minecraft:enchantments"]}, "minecraft:custom_name": {extra: [{text: "天使の羽", bold: 1b}], text: ""}}, count: 8, id: "minecraft:feather"}

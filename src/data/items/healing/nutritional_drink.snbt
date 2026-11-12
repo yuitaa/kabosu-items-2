@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "いっぽんいっとくぅ？", italic: 0b}], "minecraft:enchantments": {"minecraft:silk_touch": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {color: "green", text: "栄養ドリンクの素", italic: 0b}, "minecraft:repair_cost": 9999}, count: 1, id: "minecraft:beetroot"}

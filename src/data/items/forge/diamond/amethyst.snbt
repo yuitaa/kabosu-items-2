@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "状態の良い部位を削りだした水晶。"}], "minecraft:enchantments": {"minecraft:mending": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {text: "紫水晶", italic: 0b}, "minecraft:repair_cost": 9999}, count: 1, id: "minecraft:amethyst_shard"}

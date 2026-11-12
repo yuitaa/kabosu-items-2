@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "とても貴重な金剛石。", italic: 1b}], "minecraft:enchantments": {"minecraft:mending": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {color: "aqua", text: "輝石のかたまり", italic: 0b}, "minecraft:repair_cost": 9999}, count: 1, id: "minecraft:diamond_block"}

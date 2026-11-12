@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{extra: ["天使の羽を集めて"], text: ""}, {extra: ["作った、大切な翼。"], text: ""}], "minecraft:enchantments": {"minecraft:protection": 4}, "minecraft:unbreakable": {}, "minecraft:tooltip_display": {hidden_components: ["minecraft:attribute_modifiers"]}, "minecraft:custom_name": {extra: [{text: "天使の翼", bold: 1b}], text: ""}}, count: 1, id: "minecraft:elytra"}

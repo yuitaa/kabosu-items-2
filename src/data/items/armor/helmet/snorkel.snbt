@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{extra: ["水中の作業は"], text: ""}, {extra: ["コレで決まり！"], text: ""}], "minecraft:enchantments": {"minecraft:depth_strider": 3, "minecraft:aqua_affinity": 1, "minecraft:respiration": 3}, "minecraft:unbreakable": {}, "minecraft:custom_name": {extra: [{text: "シュノーケル", bold: 1b}], text: ""}}, count: 1, id: "minecraft:turtle_helmet"}

@@ -28,7 +28,7 @@ const StatusEffectInstance = v.objectWithRest(
   {
     id: ResourceLocation,
     duration: PositiveInt,
-    amplifier: NonNegativeInt,
+    amplifier: v.optional(NonNegativeInt),
     ambient: v.optional(BooleanLike),
     show_particles: v.optional(BooleanLike),
     show_icon: v.optional(BooleanLike),

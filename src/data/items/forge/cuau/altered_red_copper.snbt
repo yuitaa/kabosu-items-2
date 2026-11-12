@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "特殊な技術で変質させた合金。"}], "minecraft:enchantments": {"minecraft:silk_touch": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {color: "red", text: "変質した赤銅", italic: 0b}}, count: 1, id: "minecraft:copper_ingot"}
