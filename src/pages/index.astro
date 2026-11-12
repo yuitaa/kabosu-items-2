@@ -1,5 +1,4 @@
 ---
-import TextSpans from '@/components/item/TextSpans.astro';
 import { isCertificateSlug } from '@/data/certificates';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
@@ -100,10 +99,7 @@ const entries = regularEntries.map((entry) => {
   <ul class="item-list">
     {entries.map(({ view, presentation, href, search, enchantments, attributes }) => (
       <li data-item data-search={search} data-enchantments={enchantments} data-attributes={attributes}>
-        <a href={href}>
-          <TextSpans spans={presentation.name} color={false} />
-        </a>{' '}
-        <code>{view.item?.id ?? view.source.slug}</code>
+        <a href={href}>{presentation.plainName}</a> <code>{view.item?.id ?? view.source.slug}</code>
       </li>
     ))}
   </ul>

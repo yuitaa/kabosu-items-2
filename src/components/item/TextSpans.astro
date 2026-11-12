@@ -3,11 +3,9 @@ import type { TextSpan } from '@/lib/minecraft/item-components/text';
 
 interface Props {
   spans: readonly TextSpan[];
-  /** Set to false to keep styles (bold, italic, ...) but drop the text color. */
-  color?: boolean;
 }
 
-const { spans, color = true } = Astro.props;
+const { spans } = Astro.props;
 
 function textDecoration(span: TextSpan): string | undefined {
   const decorations: string[] = [];
@@ -21,7 +19,7 @@ function textDecoration(span: TextSpan): string | undefined {
   {spans.map((span) => (
     <span
       style={{
-        color: color ? span.color : undefined,
+        color: span.color,
         fontWeight: span.bold ? 'bold' : undefined,
         fontStyle: span.italic ? 'italic' : undefined,
         textDecoration: textDecoration(span),
