@@ -37,6 +37,8 @@ export interface ExtraRow {
   text: string;
   /** Hex color for a swatch (currently only used by `dyed_color`). */
   swatch?: string;
+  /** Unbreakable and dye lines are shown below lore in the tooltip. */
+  afterLore?: boolean;
 }
 
 /** Everything the tooltip, the detail tables, and the Discord ANSI share. */
@@ -274,7 +276,7 @@ function buildExtras(components: Record<string, unknown>, t: Translator): ExtraR
   const extras: ExtraRow[] = [];
 
   if (components['minecraft:unbreakable'] !== undefined) {
-    extras.push({ text: t('item.unbreakable') });
+    extras.push({ text: t('item.unbreakable'), afterLore: true });
   }
 
   const trim = components['minecraft:trim'];
@@ -286,7 +288,7 @@ function buildExtras(components: Record<string, unknown>, t: Translator): ExtraR
 
   const dyed = components['minecraft:dyed_color'];
   if (dyed !== undefined) {
-    extras.push({ text: t('item.dyed'), swatch: colorToHex(dyed) });
+    extras.push({ text: t('item.dyed'), swatch: colorToHex(dyed), afterLore: true });
   }
 
   return extras;

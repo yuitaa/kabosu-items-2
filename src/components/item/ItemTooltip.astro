@@ -8,6 +8,8 @@ interface Props {
 
 const { presentation } = Astro.props;
 const attributeGroups = groupAttributes(presentation.attributes);
+const aboveLoreExtras = presentation.extras.filter((extra) => !extra.afterLore);
+const belowLoreExtras = presentation.extras.filter((extra) => extra.afterLore);
 ---
 
 <div class="item-tooltip">
@@ -20,6 +22,37 @@ const attributeGroups = groupAttributes(presentation.attributes);
       {presentation.enchantments.map((row) => (
         <div class="item-enchantment">
           {row.name} {row.level}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {presentation.potions.length > 0 && (
+    <div class="item-effect-group">
+      {presentation.potions.map((row) => (
+        <div class="item-potion">
+          {[row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {aboveLoreExtras.length > 0 && (
+    <div class="item-effect-group">
+      {aboveLoreExtras.map((extra) => (
+        <div class="item-extra">
+          {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
+          {extra.text}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {presentation.lore.length > 0 && (
+    <div class="item-lore-group">
+      {presentation.lore.map((line) => (
+        <div class="item-lore">
+          <TextSpans spans={line} />
         </div>
       ))}
     </div>
@@ -38,32 +71,12 @@ const attributeGroups = groupAttributes(presentation.attributes);
     </div>
   )}
 
-  {presentation.potions.length > 0 && (
+  {belowLoreExtras.length > 0 && (
     <div class="item-effect-group">
-      {presentation.potions.map((row) => (
-        <div class="item-potion">
-          {[row.name, row.level, row.duration && `(${row.duration})`].filter(Boolean).join(' ')}
-        </div>
-      ))}
-    </div>
-  )}
-
-  {presentation.extras.length > 0 && (
-    <div class="item-effect-group">
-      {presentation.extras.map((extra) => (
+      {belowLoreExtras.map((extra) => (
         <div class="item-extra">
           {extra.swatch && <span class="item-swatch" data-color={extra.swatch} />}
           {extra.text}
-        </div>
-      ))}
-    </div>
-  )}
-
-  {presentation.lore.length > 0 && (
-    <div class="item-lore-group">
-      {presentation.lore.map((line) => (
-        <div class="item-lore">
-          <TextSpans spans={line} />
         </div>
       ))}
     </div>
@@ -84,6 +97,7 @@ const attributeGroups = groupAttributes(presentation.attributes);
 
   .item-effect-group + .item-effect-group,
   .item-effect-group + .item-lore-group,
+  .item-lore-group + .item-effect-group,
   .item-name + .item-lore-group {
     margin-block-start: 1em;
   }
