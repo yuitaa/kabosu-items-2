@@ -1,0 +1,53 @@
+---
+interface Props {
+  command: string;
+}
+
+const { command } = Astro.props;
+---
+
+<div class="give-command">
+  <pre class="give-command-code"><code data-give-command>{command}</code></pre>
+  <button type="button" class="give-command-copy" data-copy-command>
+    コピー
+  </button>
+  <p class="give-command-status" data-copy-status aria-live="polite"></p>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-copy-command]');
+
+  for (const button of buttons) {
+    button.addEventListener('click', async () => {
+      const container = button.closest('.give-command');
+      const code = container?.querySelector('[data-give-command]');
+      const status = container?.querySelector('[data-copy-status]');
+      if (!code) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(code.textContent ?? '');
+        if (status) {
+          status.textContent = 'コピーしました';
+        }
+      } catch {
+        if (status) {
+          status.textContent = 'コピーできませんでした';
+        }
+      }
+
+      window.setTimeout(() => {
+        if (status) {
+          status.textContent = '';
+        }
+      }, 2000);
+    });
+  }
+</script>
+
+<style>
+  .give-command-code {
+    overflow-x: auto;
+  }
+</style>

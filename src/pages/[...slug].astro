@@ -1,9 +1,11 @@
 ---
+import GiveCommand from '@/components/item/GiveCommand.astro';
 import ItemPreview from '@/components/item/ItemPreview.astro';
 import SnbtCode from '@/components/item/SnbtCode.astro';
 import TextSpans from '@/components/item/TextSpans.astro';
 import { itemEntries } from '@/data/item-views';
 import Layout from '@/layouts/Layout.astro';
+import { buildGiveCommand } from '@/lib/minecraft/item/give';
 import { groupAttributes } from '@/lib/minecraft/item/presentation';
 import { effectWikiUrl, enchantmentWikiUrl } from '@/lib/minecraft/wiki';
 
@@ -26,6 +28,11 @@ const attributeGroups = groupAttributes(presentation.attributes);
 const root = view.root;
 const componentsTag = root?.isCompound() && root.hasCompound('components') ? root.getCompound('components') : null;
 const componentsSnbt = componentsTag && componentsTag.size > 0 ? `components: ${componentsTag.toPrettyString()}` : null;
+
+const giveCommand = buildGiveCommand(root);
+if (!giveCommand) {
+  throw new Error(`Could not build give command: ${slug}`);
+}
 
 const loreText = presentation.lore
   .map((line) => line.map((span) => span.text).join(''))
@@ -137,6 +144,11 @@ const description = loreText || undefined;
       </table>
     </section>
   )}
+
+  <section aria-labelledby="item-give-heading">
+    <h2 id="item-give-heading">Give Command</h2>
+    <GiveCommand command={giveCommand} />
+  </section>
 
   <section aria-labelledby="item-components-heading">
     <h2 id="item-components-heading">コンポーネント</h2>

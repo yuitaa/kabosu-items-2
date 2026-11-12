@@ -1,3 +1,4 @@
+import { buildGiveCommand } from '@/lib/minecraft/item/give';
 import { loadItem } from '@/lib/minecraft/item/load';
 import type { ItemSource } from '@/lib/minecraft/item/types';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -54,6 +55,11 @@ for (const file of files) {
   const unknown = view.components.filter((component) => component.kind === 'unknown');
   const invalid = view.components.filter((component) => component.kind === 'invalid');
   unknownCount += unknown.length;
+
+  if (!buildGiveCommand(view.root)) {
+    hasErrors = true;
+    console.error(`invalid ${source.slug}: could not build give command`);
+  }
 
   if (invalid.length > 0) {
     hasErrors = true;
