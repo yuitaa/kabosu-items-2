@@ -98,7 +98,7 @@ const entries = itemEntries.map((entry) => {
     {entries.map(({ view, presentation, href, search, enchantments, attributes }) => (
       <li data-item data-search={search} data-enchantments={enchantments} data-attributes={attributes}>
         <a href={href}>
-          <TextSpans spans={presentation.name} />
+          <TextSpans spans={presentation.name} color={false} />
         </a>{' '}
         <code>{view.item?.id ?? view.source.slug}</code>
       </li>

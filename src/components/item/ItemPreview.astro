@@ -11,42 +11,17 @@ const { presentation } = Astro.props;
 ---
 
 <div class="item-preview">
-  <input type="radio" name="item-preview" id="item-preview-tooltip" checked />
-  <input type="radio" name="item-preview" id="item-preview-ansi" />
-
-  <div class="item-preview-tabs">
-    <label for="item-preview-tooltip">ツールチップ</label>
-    <label for="item-preview-ansi">Discord用ANSI</label>
-  </div>
-
   {presentation.hideTooltip && (
     <p class="item-tooltip-note">このアイテムはゲーム内でツールチップが非表示に設定されています。</p>
   )}
 
   <div class="item-preview-panel" data-panel="tooltip">
+    <h3>ツールチップ</h3>
     <ItemTooltip presentation={presentation} />
   </div>
 
   <div class="item-preview-panel" data-panel="ansi">
+    <h3>Discord用ANSI</h3>
     <DiscordAnsi presentation={presentation} />
   </div>
 </div>
-
-<style>
-  .item-preview > input[type='radio'] {
-    position: absolute;
-    opacity: 0;
-  }
-
-  .item-preview-panel {
-    display: none;
-  }
-
-  #item-preview-tooltip:checked ~ .item-preview-panel[data-panel='tooltip'] {
-    display: block;
-  }
-
-  #item-preview-ansi:checked ~ .item-preview-panel[data-panel='ansi'] {
-    display: block;
-  }
-</style>
