@@ -8,7 +8,6 @@ import { groupAttributes, type ItemPresentation } from '@/lib/minecraft/item/pre
  */
 const ESC = '\u001B';
 const RESET = `${ESC}[0m`;
-const GRAY = `${ESC}[30m`;
 
 const ANSI_PALETTE = [
   { rgb: [78, 80, 88], code: 30 },
@@ -60,31 +59,31 @@ export function buildDiscordAnsi(presentation: ItemPresentation): string {
   }
 
   if (presentation.firework) {
-    lines.push(gray(presentation.firework.flightText));
+    lines.push(presentation.firework.flightText);
     for (const explosion of presentation.firework.explosions) {
       const count = explosion.count > 1 ? ` x ${explosion.count}` : '';
-      lines.push(gray(` - ${explosion.shape}${count}`));
+      lines.push(` - ${explosion.shape}${count}`);
       for (const color of explosion.colors) {
-        lines.push(gray(`   - ${color.name ?? color.hex}`));
+        lines.push(`   - ${color.name ?? color.hex}`);
       }
       if (explosion.fadeColors.length > 0) {
         const colors = explosion.fadeColors.map((color) => color.name ?? color.hex).join(' ');
-        lines.push(gray(`   - ${explosion.fadeLabel}${colors}`));
+        lines.push(`   - ${explosion.fadeLabel}${colors}`);
       }
       for (const effect of explosion.effects) {
-        lines.push(gray(`   - ${effect}`));
+        lines.push(`   - ${effect}`);
       }
     }
   }
 
   if (presentation.banner) {
     if (presentation.banner.baseColor) {
-      lines.push(gray(` - ${presentation.banner.baseColorLabel} ${presentation.banner.baseColor}`));
+      lines.push(` - ${presentation.banner.baseColorLabel} ${presentation.banner.baseColor}`);
     }
     if (presentation.banner.patterns.length > 0) {
-      lines.push(gray(` - ${presentation.banner.patternsLabel}`));
+      lines.push(` - ${presentation.banner.patternsLabel}`);
       for (const pattern of presentation.banner.patterns) {
-        lines.push(gray(`   - ${pattern.text}`));
+        lines.push(`   - ${pattern.text}`);
       }
     }
   }
@@ -98,10 +97,6 @@ export function buildDiscordAnsi(presentation: ItemPresentation): string {
   }
 
   return ['```ansi', lines.join('\n'), `${RESET}\`\`\``].join('\n');
-}
-
-function gray(text: string): string {
-  return `${GRAY}${text}${RESET}`;
 }
 
 function styleCodes(span: TextSpan): string {
