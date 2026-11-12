@@ -34,15 +34,17 @@ if (!giveCommand) {
   throw new Error(`Could not build give command: ${slug}`);
 }
 
-const loreText = presentation.lore
-  .map((line) => line.map((span) => span.text).join(''))
-  .filter((line) => line.trim() !== '')
-  .join(' ')
-  .trim();
-const description = loreText || undefined;
+const ogImage = `/og/${view.source.slug}.png`;
+const ogImageAlt = `「${presentation.plainName}」のアイテムツールチップ`;
 ---
 
-<Layout title={`${presentation.plainName} | Kabosu Items 2`} description={description} type="article">
+<Layout
+  title={`${presentation.plainName} | Kabosu Items 2`}
+  type="article"
+  image={ogImage}
+  imageAlt={ogImageAlt}
+  imageWidth={1200}
+  imageHeight={630}>
   <h1 class="mb-2 border-l-4 border-emerald-700 bg-gray-900 p-2 pl-4 text-2xl">
     <TextSpans spans={presentation.name} />
   </h1>
