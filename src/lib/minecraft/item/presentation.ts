@@ -46,6 +46,14 @@ export interface ExtraRow {
   afterLore?: boolean;
 }
 
+/** Structured trim data shared by the tooltip and the basic information table. */
+export interface TrimInfo {
+  material: string;
+  pattern: string;
+  /** Combined label, e.g. `金素材の彫刻家の装飾`. */
+  text: string;
+}
+
 /** Everything the tooltip, the detail tables, and the Discord ANSI share. */
 export interface ItemPresentation {
   name: TextSpan[];
@@ -53,6 +61,10 @@ export interface ItemPresentation {
   /** The vanilla item name from the translation file, ignoring `custom_name`. */
   itemName: string;
   unbreakable: boolean;
+  /** Hex color from `dyed_color`, or `null` when the item is not dyed. */
+  dyedColor: string | null;
+  /** Trim material and pattern, or `null` when the item has no trim. */
+  trim: TrimInfo | null;
   lore: TextSpan[][];
   enchantments: EnchantmentRow[];
   attributes: AttributeRow[];
@@ -93,6 +105,8 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
       plainName: fallbackName,
       itemName: fallbackName,
       unbreakable: false,
+      dyedColor: null,
+      trim: null,
       lore: [],
       enchantments: [],
       attributes: [],
@@ -104,17 +118,21 @@ export function buildPresentation(item: ItemStack | null, t: Translator, fallbac
   const components = (item.components ?? {}) as Record<string, unknown>;
   const unbreakable = components['minecraft:unbreakable'] !== undefined;
   const name = buildName(item.id, components, t);
+  const dyedColor = colorToHex(components['minecraft:dyed_color']) ?? null;
+  const trim = buildTrim(components, t);
 
   return {
     name,
     plainName: name.map((span) => span.text).join('') || fallbackName,
     itemName: t(resourceKey('item', item.id), item.id),
     unbreakable,
+    dyedColor,
+    trim,
     lore: buildLore(components['minecraft:lore']),
     enchantments: buildEnchantments(components, t),
     attributes: buildAttributes(components, t),
     potions: buildPotions(components, t),
-    extras: buildExtras(components, t),
+    extras: buildExtras(components, t, trim, dyedColor),
   };
 }
 
@@ -280,23 +298,35 @@ function buildPotions(components: Record<string, unknown>, t: Translator): Potio
   return rows;
 }
 
-function buildExtras(components: Record<string, unknown>, t: Translator): ExtraRow[] {
+function buildTrim(components: Record<string, unknown>, t: Translator): TrimInfo | null {
+  const trim = components['minecraft:trim'];
+  if (!isRecord(trim) || typeof trim.material !== 'string' || typeof trim.pattern !== 'string') {
+    return null;
+  }
+
+  const material = t(resourceKey('trim_material', trim.material), trim.material);
+  const pattern = t(resourceKey('trim_pattern', trim.pattern), trim.pattern);
+  return { material, pattern, text: `${material}の${pattern}` };
+}
+
+function buildExtras(
+  components: Record<string, unknown>,
+  t: Translator,
+  trim: TrimInfo | null,
+  dyedColor: string | null,
+): ExtraRow[] {
   const extras: ExtraRow[] = [];
 
   if (components['minecraft:unbreakable'] !== undefined) {
     extras.push({ text: t('item.unbreakable'), afterLore: true });
   }
 
-  const trim = components['minecraft:trim'];
-  if (isRecord(trim) && typeof trim.material === 'string' && typeof trim.pattern === 'string') {
-    const material = t(resourceKey('trim_material', trim.material), trim.material);
-    const pattern = t(resourceKey('trim_pattern', trim.pattern), trim.pattern);
-    extras.push({ text: `${material}の${pattern}` });
+  if (trim) {
+    extras.push({ text: trim.text });
   }
 
-  const dyed = components['minecraft:dyed_color'];
-  if (dyed !== undefined) {
-    extras.push({ text: t('item.dyed'), swatch: colorToHex(dyed), afterLore: true });
+  if (components['minecraft:dyed_color'] !== undefined) {
+    extras.push({ text: t('item.dyed'), swatch: dyedColor ?? undefined, afterLore: true });
   }
 
   return extras;

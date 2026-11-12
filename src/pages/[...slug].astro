@@ -63,6 +63,21 @@ const description = loreText || undefined;
       </dd>
       <dt>不可壊</dt>
       <dd>{presentation.unbreakable ? 'あり' : 'なし'}</dd>
+      {presentation.dyedColor && (
+        <>
+          <dt>染色済み</dt>
+          <dd>
+            <span class="item-swatch" style={`background-color: ${presentation.dyedColor}`} aria-hidden="true" />
+            {presentation.dyedColor}
+          </dd>
+        </>
+      )}
+      {presentation.trim && (
+        <>
+          <dt>装飾</dt>
+          <dd>{presentation.trim.text}</dd>
+        </>
+      )}
     </dl>
   </section>
 
@@ -155,3 +170,13 @@ const description = loreText || undefined;
     {componentsSnbt ? <SnbtCode code={componentsSnbt} /> : <p>コンポーネントはありません。</p>}
   </section>
 </Layout>
+
+<style>
+  .item-swatch {
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    border: 1px solid currentColor;
+    vertical-align: middle;
+  }
+</style>
