@@ -1,0 +1,1 @@
+{components: {"minecraft:lore": [{color: "white", text: "しんしょくされるっ！", italic: 0b}], "minecraft:enchantments": {"minecraft:unbreaking": 1}, "minecraft:tooltip_display": {hidden_components: ["minecraft:enchantments"]}, "minecraft:custom_name": {color: "gold", text: "なかよしきのこ", bold: 1b, italic: 0b}}, count: 1, id: "minecraft:red_mushroom"}
